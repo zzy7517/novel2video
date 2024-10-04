@@ -27,6 +27,6 @@ func main() {
 	}))
 
 	r.GET("/api/get/novel/fragments", text_handler.GetNovelFragments)
-	r.PATCH("/api/combine/novel/fragments", text_handler.GetCombinedNovelFragments)
+	r.POST("/api/save/novel/fragments", text_handler.SaveCombinedFragments)
 	r.Run("localhost:1198")
 }

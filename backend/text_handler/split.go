@@ -13,8 +13,28 @@ import (
 	"novel2video/backend"
 )
 
-func GetCombinedNovelFragments(c *gin.Context) {
-
+func SaveCombinedFragments(c *gin.Context) {
+	var fragments []string
+	if err := c.ShouldBindJSON(&fragments); err != nil {
+		backend.HandleError(c, http.StatusBadRequest, "Invalid request", err)
+		return
+	}
+	err := os.RemoveAll("temp/fragments")
+	if err != nil {
+		backend.HandleError(c, http.StatusInternalServerError, "Failed to remove directory", err)
+		return
+	}
+	err = os.MkdirAll("temp/fragments", os.ModePerm)
+	if err != nil {
+		backend.HandleError(c, http.StatusInternalServerError, "Failed to create directory", err)
+		return
+	}
+	err = saveListToFiles(fragments)
+	if err != nil {
+		backend.HandleError(c, http.StatusInternalServerError, "Failed to save", err)
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Fragments saved successfully"})
 }
 
 func GetNovelFragments(c *gin.Context) {
@@ -42,6 +62,17 @@ func GetNovelFragments(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, lines)
+}
+
+func saveListToFiles(in []string) error {
+	for i, line := range in {
+		filePath := fmt.Sprintf("temp/fragments/%d.txt", i)
+		err := os.WriteFile(filePath, []byte(line), 0644)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func saveLinesToFiles(fileName string) error {

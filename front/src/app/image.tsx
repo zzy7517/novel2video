@@ -42,6 +42,27 @@ export default function AIImageGenerator() {
 
         setFragments(newFragments);
         setImages(newImages);
+        // todo 如果生成完了图片再合并，图片也要重新存一下，或者直接删第多少个
+        saveFragments(newFragments);
+    };
+
+    const saveFragments = async (fragments: string[]) => {
+        try {
+            const response = await fetch('http://localhost:1198/api/save/novel/fragments', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(fragments),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to save fragments');
+            }
+            console.log('Fragments saved successfully');
+        } catch (error) {
+            console.error('Error saving fragments:', error);
+        }
     };
 
     return (
@@ -56,22 +77,12 @@ export default function AIImageGenerator() {
                         <div key={index} className="card">
                             <div className="input-section">
                                 <textarea value={line} readOnly rows={4} className="scrollable"></textarea>
-                                <div className="checkbox-group">
+                                <div className="button-group">
                                     {index !== 0 && (
-                                        <label>
-                                            <input
-                                                type="checkbox"
-                                                onChange={() => mergeFragments(index, 'up')}
-                                            /> Merge Up
-                                        </label>
+                                        <button className="merge-button" onClick={() => mergeFragments(index, 'up')}>Merge Up</button>
                                     )}
                                     {index !== fragments.length - 1 && (
-                                        <label>
-                                            <input
-                                                type="checkbox"
-                                                onChange={() => mergeFragments(index, 'down')}
-                                            /> Merge Down
-                                        </label>
+                                        <button className="merge-button" onClick={() => mergeFragments(index, 'down')}>Merge Down</button>
                                     )}
                                 </div>
                             </div>
@@ -81,7 +92,7 @@ export default function AIImageGenerator() {
                             </div>
                             <div className="image-section">
                                 <Image
-                                    src={images[0]} // Use the single placeholder image
+                                    src={images[index]} // Use the corresponding image
                                     alt={`Generated image ${index + 1}`}
                                     width={300}
                                     height={200}
@@ -125,12 +136,14 @@ export default function AIImageGenerator() {
                     resize: vertical;
                     overflow-y: auto;
                 }
-                .checkbox-group {
+                .button-group {
                     display: flex;
                     flex-direction: column;
                 }
-                .checkbox-group label {
+                .button-group .merge-button {
                     margin-bottom: 5px;
+                    padding: 5px 10px; /* Smaller padding */
+                    font-size: 14px; /* Smaller font size */
                 }
                 button {
                     background-color: #0070f3;
