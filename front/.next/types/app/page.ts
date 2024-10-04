@@ -1,4 +1,4 @@
-// File: /Users/zhongyuanzhang/novel2video/frontend/src/app/page.tsx
+// File: /Users/zhongyuanzhang/novel2video/front/src/app/page.tsx
 import * as entry from '../../../src/app/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
