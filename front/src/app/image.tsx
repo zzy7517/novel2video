@@ -5,6 +5,7 @@ import Image from "next/image";
 export default function AIImageGenerator() {
     const [images, setImages] = useState<string[]>([""]);
     const [fragments, setFragments] = useState<string[]>([""]);
+    const [loaded, setLoaded] = useState<boolean>(false); // State to track if fragments are loaded
 
     const extractChapterFragments = () => {
         // Fetch file content from the backend
@@ -17,6 +18,7 @@ export default function AIImageGenerator() {
                 console.log(data); // 检查数据格式
                 setFragments(data);
                 setImages(data.map(() => "https://via.placeholder.com/400x300"));
+                setLoaded(true); // Set loaded to true after data is fetched
             })
             .catch(error => console.error('Error fetching file content:', error));
     };
@@ -32,35 +34,39 @@ export default function AIImageGenerator() {
             <div className="header">
                 <h1>AI Image Generator</h1>
             </div>
-            <button onClick={()=>{extractChapterFragments();}}>分割章节</button>
-            {fragments.map((line, index) => (
-                <div key={index} className="card">
-                    <div className="input-section">
-                        <input type="text" value={line} readOnly/>
-                        <div className="checkbox-group">
-                            <label>
-                                <input type="checkbox"/> Option 1
-                            </label>
-                            <label>
-                                <input type="checkbox"/> Option 2
-                            </label>
+            <button onClick={extractChapterFragments}>分割章节</button>
+            {loaded && (
+                <>
+                    {fragments.map((line, index) => (
+                        <div key={index} className="card">
+                            <div className="input-section">
+                                <textarea value={line} readOnly rows={4} className="scrollable"></textarea>
+                                <div className="checkbox-group">
+                                    <label>
+                                        <input type="checkbox"/> Option 1
+                                    </label>
+                                    <label>
+                                        <input type="checkbox"/> Option 2
+                                    </label>
+                                </div>
+                            </div>
+                            <div className="description-section">
+                                <textarea placeholder="Image prompt" rows={4} className="scrollable"></textarea>
+                                <button onClick={() => generateImage(index)}>Generate Image</button>
+                            </div>
+                            <div className="image-section">
+                                <Image
+                                    src={images[index]}
+                                    alt={`Generated image ${index + 1}`}
+                                    width={300}
+                                    height={200}
+                                />
+                            </div>
                         </div>
-                    </div>
-                    <div className="description-section">
-                        <textarea placeholder="Image description" rows={4}></textarea>
-                        <button onClick={() => generateImage(index)}>Generate Image</button>
-                    </div>
-                    <div className="image-section">
-                        <Image
-                            src={images[index]}
-                            alt={`Generated image ${index + 1}`}
-                            width={300}
-                            height={200}
-                        />
-                    </div>
-                </div>
-            ))}
-            <button className="generate-all">Generate All Images</button>
+                    ))}
+                    <button className="generate-all">Generate All Images</button>
+                </>
+            )}
             <style jsx>{`
                 .container {
                     max-width: 1200px;
@@ -85,12 +91,14 @@ export default function AIImageGenerator() {
                 .input-section, .description-section, .image-section {
                     width: 30%;
                 }
-                input[type="text"], textarea {
+                textarea {
                     width: 100%;
                     padding: 10px;
                     margin-bottom: 10px;
                     border: 1px solid #ddd;
                     border-radius: 4px;
+                    resize: vertical;
+                    overflow-y: auto;
                 }
                 .checkbox-group {
                     display: flex;
