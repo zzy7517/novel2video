@@ -9,49 +9,24 @@
 package main
 
 import (
-	"bufio"
-	"net/http"
-	"os"
-	"strings"
-
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+
+	"novel2video/backend/text_handler"
 )
-
-func GetNovelFragments(c *gin.Context) {
-	file, err := os.Open("a.txt")
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to open file"})
-		return
-	}
-	defer file.Close()
-
-	var lines []string
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
-		if line != "" {
-			lines = append(lines, line)
-		}
-	}
-	if err := scanner.Err(); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read file"})
-		return
-	}
-	c.JSON(http.StatusOK, lines)
-}
 
 func main() {
 	r := gin.Default()
 
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000"}, // 允许的前端地址
+		AllowOrigins:     []string{"*"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 	}))
 
-	r.GET("/api/get/novel/fragments", GetNovelFragments)
-	r.Run("localhost:1198") // 监听并在 0.0.0.0:8080 上启动服务
+	r.GET("/api/get/novel/fragments", text_handler.GetNovelFragments)
+	r.PATCH("/api/combine/novel/fragments", text_handler.GetCombinedNovelFragments)
+	r.Run("localhost:1198")
 }

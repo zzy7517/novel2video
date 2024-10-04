@@ -3,19 +3,14 @@ import React, { useState } from 'react';
 import Image from "next/image";
 
 export default function AIImageGenerator() {
-    const [images, setImages] = useState<string[]>([""]);
+    const [images, setImages] = useState<string[]>(["https://via.placeholder.com/400x300"]);
     const [fragments, setFragments] = useState<string[]>([""]);
-    const [loaded, setLoaded] = useState<boolean>(false); // State to track if fragments are loaded
+    const [loaded, setLoaded] = useState<boolean>(false);
 
     const extractChapterFragments = () => {
-        // Fetch file content from the backend
         fetch('http://localhost:1198/api/get/novel/fragments')
-            .then(response => {
-                console.log('Response received');
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
-                console.log(data); // 检查数据格式
                 setFragments(data);
                 setImages(data.map(() => "https://via.placeholder.com/400x300"));
                 setLoaded(true); // Set loaded to true after data is fetched
@@ -24,8 +19,28 @@ export default function AIImageGenerator() {
     };
 
     const generateImage = (index: number) => {
+        console.log(`Generate image for fragment ${index + 1}`);
+    };
+
+    const mergeFragments = (index: number, direction: 'up' | 'down') => {
+        if ((direction === 'up' && index === 0) || (direction === 'down' && index === fragments.length - 1)) {
+            return; // Cannot merge if at the boundary
+        }
+
+        const newFragments = [...fragments];
         const newImages = [...images];
-        newImages[index] = `/placeholder.svg?height=300&width=400&text=Generated${index + 1}`;
+
+        if (direction === 'up') {
+            newFragments[index - 1] += ' ' + newFragments[index];
+            newFragments.splice(index, 1);
+            newImages.splice(index, 1); // Remove the image for the merged fragment
+        } else if (direction === 'down') {
+            newFragments[index] += ' ' + newFragments[index + 1];
+            newFragments.splice(index + 1, 1);
+            newImages.splice(index + 1, 1); // Remove the image for the merged fragment
+        }
+
+        setFragments(newFragments);
         setImages(newImages);
     };
 
@@ -42,12 +57,22 @@ export default function AIImageGenerator() {
                             <div className="input-section">
                                 <textarea value={line} readOnly rows={4} className="scrollable"></textarea>
                                 <div className="checkbox-group">
-                                    <label>
-                                        <input type="checkbox"/> Option 1
-                                    </label>
-                                    <label>
-                                        <input type="checkbox"/> Option 2
-                                    </label>
+                                    {index !== 0 && (
+                                        <label>
+                                            <input
+                                                type="checkbox"
+                                                onChange={() => mergeFragments(index, 'up')}
+                                            /> Merge Up
+                                        </label>
+                                    )}
+                                    {index !== fragments.length - 1 && (
+                                        <label>
+                                            <input
+                                                type="checkbox"
+                                                onChange={() => mergeFragments(index, 'down')}
+                                            /> Merge Down
+                                        </label>
+                                    )}
                                 </div>
                             </div>
                             <div className="description-section">
@@ -56,7 +81,7 @@ export default function AIImageGenerator() {
                             </div>
                             <div className="image-section">
                                 <Image
-                                    src={images[index]}
+                                    src={images[0]} // Use the single placeholder image
                                     alt={`Generated image ${index + 1}`}
                                     width={300}
                                     height={200}
