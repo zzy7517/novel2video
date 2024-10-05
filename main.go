@@ -35,6 +35,8 @@ func main() {
 	r.GET("/api/get/novel/fragments", text_handler.GetNovelFragments)
 	r.POST("/api/save/novel/fragments", text_handler.SaveCombinedFragments)
 	r.GET("/api/get/novel/prompts", text_handler.ExtractPromptFromTexts)
+	r.POST("/api/novel/images", text_handler.GenerateImage)
+	r.GET("/api/novel/images", text_handler.GetLocalImages)
 	err := r.Run("localhost:1198")
 	if err != nil {
 		return

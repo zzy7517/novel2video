@@ -7,15 +7,18 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 
 	"github.com/sirupsen/logrus"
+
+	"novel2video/backend/util"
 )
 
-var url = "http://10.193.239.248:7860/"
+var url = "http://10.193.239.248:7860"
 
 func GenerateImage(prompt string, seed int, width int, height int, order int) error {
 	payload := map[string]interface{}{
-		"prompt":          "anime" + prompt,
+		"prompt":          "anime " + prompt,
 		"negative_prompt": "booty, boob, (nsfw), (painting by bad-artist-anime:0.9), (painting by bad-artist:0.9), watermark, text, error, blurry, jpeg artifacts, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, artist name, (worst quality, low quality:1.4), bad anatomy",
 		"cfg_scale":       7,
 		"steps":           30,
@@ -64,19 +67,12 @@ func GenerateImage(prompt string, seed int, width int, height int, order int) er
 		return fmt.Errorf("failed to decode image: %v", err)
 	}
 
-	outputFilename := fmt.Sprintf("temp/images/%d.png", order)
+	outputFilename := fmt.Sprintf("%v/%d.png", util.ImageDir, order)
 
-	if err := ioutil.WriteFile(outputFilename, imageData, 0644); err != nil {
+	if err := os.WriteFile(outputFilename, imageData, 0644); err != nil {
 		return fmt.Errorf("failed to write image file: %v", err)
 	}
 
 	logrus.Infof("Image saved to", outputFilename)
 	return nil
-}
-
-func main() {
-	err := GenerateImage("(Best Quality), a boy, Anime, sitting, eating, ((masterpiece)) <lora:ChosenChineseStyleNsfw_v20:1>", 114514191981, 540, 960, 3)
-	if err != nil {
-		fmt.Println("Error:", err)
-	}
 }

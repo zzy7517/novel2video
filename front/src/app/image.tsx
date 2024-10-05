@@ -5,7 +5,7 @@ import Image from "next/image";
 export default function AIImageGenerator() {
     const [images, setImages] = useState<string[]>(["https://via.placeholder.com/400x300"]);
     const [fragments, setFragments] = useState<string[]>([""]);
-    const [prompts, setPrompts] = useState<string[]>([""]); // State to store prompts
+    const [prompts, setPrompts] = useState<string[]>([""]);
     const [loaded, setLoaded] = useState<boolean>(false);
 
     const extractChapterFragments = () => {
@@ -26,13 +26,45 @@ export default function AIImageGenerator() {
         fetch('http://localhost:1198/api/get/novel/prompts')
             .then(response => response.json())
             .then(data => {
-                setPrompts(data); // Update prompts state with fetched data
+                setPrompts(data);
             })
             .catch(error => console.error('Error fetching prompts:', error));
     };
 
     const generateImage = (index: number) => {
         console.log(`Generate image for fragment ${index + 1}`);
+    };
+
+    const generateAllImages = () => {
+        fetch('http://localhost:1198/api/novel/images', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        })
+            .then(response => response.json())
+            .then(() => {
+                console.log('Images generation initiated');
+            })
+            .catch(error => console.error('Error generating all images:', error));
+    };
+
+    type ImageMap = Record<string, string>;
+
+    const refreshImages = () => {
+        fetch('http://localhost:1198/api/novel/images')
+            .then(response => response.json() as Promise<ImageMap>)
+            .then((imageMap: ImageMap) => {
+                const updatedImages = [...images];
+                for (const [index, imageUrl] of Object.entries(imageMap)) {
+                    const numericIndex = Number(index);
+                    if (!isNaN(numericIndex)) {
+                        updatedImages[numericIndex] = imageUrl;
+                    }
+                }
+                setImages(updatedImages);
+            })
+            .catch(error => console.error('Error fetching image:', error));
     };
 
     const mergeFragments = (index: number, direction: 'up' | 'down') => {
@@ -87,7 +119,8 @@ export default function AIImageGenerator() {
                 {loaded && (
                     <>
                         <button onClick={extractPrompts} className="extract-prompts-button">提取文生图prompts</button>
-                        <button className="generate-all">一键生成</button>
+                        <button onClick={generateAllImages} className="generate-all">一键生成</button>
+                        <button onClick={refreshImages} className="refresh-images">刷新图像</button>
                     </>
                 )}
             </div>
@@ -108,7 +141,7 @@ export default function AIImageGenerator() {
                             </div>
                             <div className="description-section">
                                 <textarea
-                                    value={prompts[index] || ''} // Populate the prompt for each fragment
+                                    value={prompts[index] || ''}
                                     placeholder="prompt"
                                     rows={4}
                                     className="scrollable"
@@ -143,8 +176,8 @@ export default function AIImageGenerator() {
                 }
                 .button-container {
                     display: flex;
-                    gap: 20px; /* Add space between buttons */
-                    margin-bottom: 20px; /* Add space below the button container */
+                    gap: 20px;
+                    margin-bottom: 20px;
                 }
                 .card {
                     display: flex;
@@ -191,9 +224,9 @@ export default function AIImageGenerator() {
                     background-color: #ccc;
                     cursor: not-allowed;
                 }
-                .generate-all {
-                    padding: 10px 20px; /* Adjust padding to match other buttons */
-                    font-size: 16px; /* Ensure font size is consistent */
+                .generate-all, .refresh-images {
+                    padding: 10px 20px;
+                    font-size: 16px;
                 }
             `}</style>
         </div>
