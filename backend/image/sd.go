@@ -13,7 +13,7 @@ import (
 
 var url = "http://10.193.239.248:7860/"
 
-func generateImage(prompt string, seed int, width int, height int, order int) error {
+func GenerateImage(prompt string, seed int, width int, height int, order int) error {
 	payload := map[string]interface{}{
 		"prompt":          "anime" + prompt,
 		"negative_prompt": "booty, boob, (nsfw), (painting by bad-artist-anime:0.9), (painting by bad-artist:0.9), watermark, text, error, blurry, jpeg artifacts, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, artist name, (worst quality, low quality:1.4), bad anatomy",
@@ -75,7 +75,7 @@ func generateImage(prompt string, seed int, width int, height int, order int) er
 }
 
 func main() {
-	err := generateImage("(Best Quality), a boy, Anime, sitting, eating, ((masterpiece)) <lora:ChosenChineseStyleNsfw_v20:1>", 114514191981, 540, 960, 3)
+	err := GenerateImage("(Best Quality), a boy, Anime, sitting, eating, ((masterpiece)) <lora:ChosenChineseStyleNsfw_v20:1>", 114514191981, 540, 960, 3)
 	if err != nil {
 		fmt.Println("Error:", err)
 	}

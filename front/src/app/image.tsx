@@ -85,7 +85,10 @@ export default function AIImageGenerator() {
             <div className="button-container">
                 <button onClick={extractChapterFragments}>分割章节</button>
                 {loaded && (
-                    <button onClick={extractPrompts} className="extract-prompts-button">提取文生图prompts</button>
+                    <>
+                        <button onClick={extractPrompts} className="extract-prompts-button">提取文生图prompts</button>
+                        <button className="generate-all">一键生成</button>
+                    </>
                 )}
             </div>
             {loaded && (
@@ -123,7 +126,6 @@ export default function AIImageGenerator() {
                             </div>
                         </div>
                     ))}
-                    <button className="generate-all">Generate All Images</button>
                 </>
             )}
             <style jsx>{`
@@ -190,9 +192,8 @@ export default function AIImageGenerator() {
                     cursor: not-allowed;
                 }
                 .generate-all {
-                    display: block;
-                    width: 100%;
-                    margin-top: 20px;
+                    padding: 10px 20px; /* Adjust padding to match other buttons */
+                    font-size: 16px; /* Ensure font size is consistent */
                 }
             `}</style>
         </div>
