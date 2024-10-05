@@ -11,12 +11,18 @@ package main
 import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 
 	"novel2video/backend/text_handler"
 )
 
 func main() {
 	r := gin.Default()
+
+	logrus.SetFormatter(&logrus.TextFormatter{
+		FullTimestamp: true,
+	})
+	logrus.SetLevel(logrus.InfoLevel)
 
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
@@ -28,5 +34,9 @@ func main() {
 
 	r.GET("/api/get/novel/fragments", text_handler.GetNovelFragments)
 	r.POST("/api/save/novel/fragments", text_handler.SaveCombinedFragments)
-	r.Run("localhost:1198")
+	r.GET("/api/get/novel/prompts", text_handler.ExtractPromptFromTexts)
+	err := r.Run("localhost:1198")
+	if err != nil {
+		return
+	}
 }

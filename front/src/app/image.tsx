@@ -5,6 +5,7 @@ import Image from "next/image";
 export default function AIImageGenerator() {
     const [images, setImages] = useState<string[]>(["https://via.placeholder.com/400x300"]);
     const [fragments, setFragments] = useState<string[]>([""]);
+    const [prompts, setPrompts] = useState<string[]>([""]); // State to store prompts
     const [loaded, setLoaded] = useState<boolean>(false);
 
     const extractChapterFragments = () => {
@@ -13,9 +14,21 @@ export default function AIImageGenerator() {
             .then(data => {
                 setFragments(data);
                 setImages(data.map(() => "https://via.placeholder.com/400x300"));
-                setLoaded(true); // Set loaded to true after data is fetched
+                setLoaded(true);
             })
-            .catch(error => console.error('Error fetching file content:', error));
+            .catch(error => {
+                console.error('Error fetching file content:', error);
+                setLoaded(false);
+            });
+    };
+
+    const extractPrompts = () => {
+        fetch('http://localhost:1198/api/get/novel/prompts')
+            .then(response => response.json())
+            .then(data => {
+                setPrompts(data); // Update prompts state with fetched data
+            })
+            .catch(error => console.error('Error fetching prompts:', error));
     };
 
     const generateImage = (index: number) => {
@@ -24,7 +37,7 @@ export default function AIImageGenerator() {
 
     const mergeFragments = (index: number, direction: 'up' | 'down') => {
         if ((direction === 'up' && index === 0) || (direction === 'down' && index === fragments.length - 1)) {
-            return; // Cannot merge if at the boundary
+            return;
         }
 
         const newFragments = [...fragments];
@@ -33,16 +46,15 @@ export default function AIImageGenerator() {
         if (direction === 'up') {
             newFragments[index - 1] += ' ' + newFragments[index];
             newFragments.splice(index, 1);
-            newImages.splice(index, 1); // Remove the image for the merged fragment
+            newImages.splice(index, 1);
         } else if (direction === 'down') {
             newFragments[index] += ' ' + newFragments[index + 1];
             newFragments.splice(index + 1, 1);
-            newImages.splice(index + 1, 1); // Remove the image for the merged fragment
+            newImages.splice(index + 1, 1);
         }
 
         setFragments(newFragments);
         setImages(newImages);
-        // todo 如果生成完了图片再合并，图片也要重新存一下，或者直接删第多少个
         saveFragments(newFragments);
     };
 
@@ -70,7 +82,12 @@ export default function AIImageGenerator() {
             <div className="header">
                 <h1>AI Image Generator</h1>
             </div>
-            <button onClick={extractChapterFragments}>分割章节</button>
+            <div className="button-container">
+                <button onClick={extractChapterFragments}>分割章节</button>
+                {loaded && (
+                    <button onClick={extractPrompts} className="extract-prompts-button">提取文生图prompts</button>
+                )}
+            </div>
             {loaded && (
                 <>
                     {fragments.map((line, index) => (
@@ -87,12 +104,18 @@ export default function AIImageGenerator() {
                                 </div>
                             </div>
                             <div className="description-section">
-                                <textarea placeholder="prompt" rows={4} className="scrollable"></textarea>
+                                <textarea
+                                    value={prompts[index] || ''} // Populate the prompt for each fragment
+                                    placeholder="prompt"
+                                    rows={4}
+                                    className="scrollable"
+                                    readOnly
+                                ></textarea>
                                 <button onClick={() => generateImage(index)}>Generate Image</button>
                             </div>
                             <div className="image-section">
                                 <Image
-                                    src={images[index]} // Use the corresponding image
+                                    src={images[index]}
                                     alt={`Generated image ${index + 1}`}
                                     width={300}
                                     height={200}
@@ -115,6 +138,11 @@ export default function AIImageGenerator() {
                     justify-content: space-between;
                     align-items: center;
                     margin-bottom: 20px;
+                }
+                .button-container {
+                    display: flex;
+                    gap: 20px; /* Add space between buttons */
+                    margin-bottom: 20px; /* Add space below the button container */
                 }
                 .card {
                     display: flex;
@@ -142,8 +170,8 @@ export default function AIImageGenerator() {
                 }
                 .button-group .merge-button {
                     margin-bottom: 5px;
-                    padding: 5px 10px; /* Smaller padding */
-                    font-size: 14px; /* Smaller font size */
+                    padding: 5px 10px;
+                    font-size: 14px;
                 }
                 button {
                     background-color: #0070f3;
