@@ -1,19 +1,24 @@
-"use client";
-import React, { useState } from 'react';
+"use client"
+
+import React, { useState, useEffect } from 'react';
 import Image from "next/image";
 
 export default function AIImageGenerator() {
-    const [images, setImages] = useState<string[]>(["https://via.placeholder.com/400x300"]);
-    const [fragments, setFragments] = useState<string[]>([""]);
-    const [prompts, setPrompts] = useState<string[]>([""]);
+    const [images, setImages] = useState<string[]>([]);
+    const [fragments, setFragments] = useState<string[]>([]);
+    const [prompts, setPrompts] = useState<string[]>([]);
     const [loaded, setLoaded] = useState<boolean>(false);
+
+    useEffect(() => {
+        extractChapterFragments();
+    }, []);
 
     const extractChapterFragments = () => {
         fetch('http://localhost:1198/api/get/novel/fragments')
             .then(response => response.json())
             .then(data => {
                 setFragments(data);
-                setImages(data.map(() => "https://via.placeholder.com/400x300"));
+                setImages(data.map(() => "http://localhost:1198/images/placeholder.png"));
                 setLoaded(true);
             })
             .catch(error => {
@@ -45,6 +50,7 @@ export default function AIImageGenerator() {
             .then(response => response.json())
             .then(() => {
                 console.log('Images generation initiated');
+                refreshImages();
             })
             .catch(error => console.error('Error generating all images:', error));
     };
@@ -59,7 +65,7 @@ export default function AIImageGenerator() {
                 for (const [index, imageUrl] of Object.entries(imageMap)) {
                     const numericIndex = Number(index);
                     if (!isNaN(numericIndex)) {
-                        updatedImages[numericIndex] = imageUrl;
+                        updatedImages[numericIndex] = `http://localhost:1198${imageUrl}`;
                     }
                 }
                 setImages(updatedImages);
@@ -152,6 +158,7 @@ export default function AIImageGenerator() {
                             <div className="image-section">
                                 <Image
                                     src={images[index]}
+                                    key={images[index]}
                                     alt={`Generated image ${index + 1}`}
                                     width={300}
                                     height={200}

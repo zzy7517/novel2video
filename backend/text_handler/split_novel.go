@@ -70,7 +70,7 @@ func GetNovelFragments(c *gin.Context) {
 
 func saveListToFiles(in []string, path string) error {
 	for i, line := range in {
-		filePath := fmt.Sprintf(path+"%d.txt", i+1)
+		filePath := fmt.Sprintf(path+"%d.txt", i)
 		err := os.WriteFile(filePath, []byte(line), 0644)
 		if err != nil {
 			return err

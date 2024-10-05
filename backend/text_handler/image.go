@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -33,7 +34,7 @@ func GenerateImage(c *gin.Context) {
 	go func() {
 		for i, p := range lines {
 			pi := p
-			err := image.GenerateImage(pi, 114514191981, 540, 960, i+1)
+			err := image.GenerateImage(pi, 114514191981, 540, 960, i)
 			if err != nil {
 				fmt.Println("Error:", err)
 			}
@@ -49,18 +50,21 @@ func GetLocalImages(c *gin.Context) {
 	}
 	imageMap := make(map[string]string)
 	re := regexp.MustCompile(`(\d+)\.png`) // 从文件名中提取数字
-
+	now := time.Now().Unix()
 	for _, file := range files {
 		if !file.IsDir() {
 			matches := re.FindStringSubmatch(file.Name())
 			if len(matches) > 1 {
 				key := matches[1]
-				absPath, err := filepath.Abs(filepath.Join(util.ImageDir, file.Name()))
-				if err != nil {
-					c.JSON(http.StatusInternalServerError, gin.H{"error": "获取文件绝对路径失败"})
-					return
-				}
-				imageMap[key] = absPath
+				// absPath, err := filepath.Abs(filepath.Join(util.ImageDir, file.Name()))
+				//if err != nil {
+				//	c.JSON(http.StatusInternalServerError, gin.H{"error": "获取文件绝对路径失败"})
+				//	return
+				//}
+				// todo
+
+				absPath := filepath.Join("/images", file.Name())
+				imageMap[key] = absPath + fmt.Sprintf("?v=%d", now)
 			}
 		}
 	}

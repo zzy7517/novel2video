@@ -14,6 +14,7 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"novel2video/backend/text_handler"
+	"novel2video/backend/util"
 )
 
 func main() {
@@ -37,6 +38,7 @@ func main() {
 	r.GET("/api/get/novel/prompts", text_handler.ExtractPromptFromTexts)
 	r.POST("/api/novel/images", text_handler.GenerateImage)
 	r.GET("/api/novel/images", text_handler.GetLocalImages)
+	r.Static("/images", util.ImageDir)
 	err := r.Run("localhost:1198")
 	if err != nil {
 		return

@@ -93,7 +93,7 @@ func generateInputPrompts(list []string) []string {
 		}
 		var builder strings.Builder
 		for j, v := range list[i:end] {
-			builder.WriteString(strconv.Itoa(j+1) + ". ")
+			builder.WriteString(strconv.Itoa(j) + ". ")
 			builder.WriteString(fmt.Sprintf("%v", v))
 			if j != len(list[i:end])-1 {
 				builder.WriteString("\n")

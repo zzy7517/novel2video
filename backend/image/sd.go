@@ -18,8 +18,8 @@ var url = "http://10.193.239.248:7860"
 
 func GenerateImage(prompt string, seed int, width int, height int, order int) error {
 	payload := map[string]interface{}{
-		"prompt":          "anime " + prompt,
-		"negative_prompt": "booty, boob, (nsfw), (painting by bad-artist-anime:0.9), (painting by bad-artist:0.9), watermark, text, error, blurry, jpeg artifacts, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, artist name, (worst quality, low quality:1.4), bad anatomy",
+		"prompt":          "anime " + prompt + " <lora:The Garden of Words_20230619154444:1>",
+		"negative_prompt": "(painting by bad-artist-anime:0.9), (painting by bad-artist:0.9), watermark, text, error, blurry, jpeg artifacts, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, artist name,deformed,distorted,disfigured,doll,poorly drawn,bad anatomy,wrong anatomy,bad hand,bad fingers,NSFW",
 		"cfg_scale":       7,
 		"steps":           30,
 		"width":           width,
@@ -73,6 +73,6 @@ func GenerateImage(prompt string, seed int, width int, height int, order int) er
 		return fmt.Errorf("failed to write image file: %v", err)
 	}
 
-	logrus.Infof("Image saved to", outputFilename)
+	logrus.Infof("Image saved to %v", outputFilename)
 	return nil
 }
