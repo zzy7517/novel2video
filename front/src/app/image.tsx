@@ -205,6 +205,8 @@ export default function AIImageGenerator() {
                     border-radius: 4px;
                     resize: vertical;
                     overflow-y: auto;
+                    color: #333; /* Darker font color */
+                    background-color: #fff; /* Ensure background is white */
                 }
                 .button-group {
                     display: flex;

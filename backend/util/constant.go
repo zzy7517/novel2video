@@ -1,3 +1,6 @@
 package util
 
-var ImageDir = "temp/image"
+var (
+	ImageDir     = "temp/image"
+	CharacterDir = "temp/character"
+)
