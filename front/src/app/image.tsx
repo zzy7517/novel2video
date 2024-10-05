@@ -87,7 +87,7 @@ export default function AIImageGenerator() {
                                 </div>
                             </div>
                             <div className="description-section">
-                                <textarea placeholder="Image prompt" rows={4} className="scrollable"></textarea>
+                                <textarea placeholder="prompt" rows={4} className="scrollable"></textarea>
                                 <button onClick={() => generateImage(index)}>Generate Image</button>
                             </div>
                             <div className="image-section">
