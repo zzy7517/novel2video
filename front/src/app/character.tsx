@@ -2,13 +2,8 @@
 
 import React, { useState } from 'react'
 
-interface Role {
-    name: string
-    description: string
-}
-
 export default function CharacterExtractor() {
-    const [roles, setRoles] = useState<Record<string, Role>>({})
+    const [roles, setRoles] = useState<Record<string, string>>({})
     const [editedDescriptions, setEditedDescriptions] = useState<Record<string, string>>({})
     const [isLoading, setIsLoading] = useState(false)
 
@@ -50,7 +45,7 @@ export default function CharacterExtractor() {
                 const newRoles = { ...prev }
                 Object.entries(editedDescriptions).forEach(([name, description]) => {
                     if (newRoles[name]) {
-                        newRoles[name] = { ...newRoles[name], description }
+                        newRoles[name] = description
                     }
                 })
                 return newRoles
@@ -72,7 +67,7 @@ export default function CharacterExtractor() {
                 style={{
                     padding: '10px 20px',
                     fontSize: '16px',
-                    backgroundColor: '#0051a2',
+                    backgroundColor: '#0070f3',
                     color: 'white',
                     border: 'none',
                     borderRadius: '5px',
@@ -82,11 +77,11 @@ export default function CharacterExtractor() {
             >
                 {isLoading ? '加载中...' : '提取角色'}
             </button>
-            {Object.entries(roles).map(([name, role]) => (
+            {Object.entries(roles).map(([name, description]) => (
                 <div key={name} style={{ marginBottom: '20px', border: '1px solid #ddd', padding: '15px', borderRadius: '5px' }}>
                     <h3 style={{ marginTop: '0' }}>{name}</h3>
                     <textarea
-                        value={editedDescriptions[name] ?? role.description}
+                        value={editedDescriptions[name] ?? description}
                         onChange={(e) => handleDescriptionChange(name, e.target.value)}
                         style={{
                             width: '100%',
@@ -108,7 +103,7 @@ export default function CharacterExtractor() {
                     style={{
                         padding: '10px 20px',
                         fontSize: '16px',
-                        backgroundColor: '#008CBA',
+                        backgroundColor: '#0070f3',
                         color: 'white',
                         border: 'none',
                         borderRadius: '5px',

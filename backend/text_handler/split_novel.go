@@ -163,12 +163,12 @@ func GetInitial(c *gin.Context) {
 	}
 	prompts, err := readLinesFromDirectory(util.PromptsDir)
 	if err != nil {
-		backend.HandleError(c, http.StatusInternalServerError, "Failed to read fragments", err)
+		backend.HandleError(c, http.StatusInternalServerError, "Failed to read prompts", err)
 		return
 	}
 	files, err := os.ReadDir(util.ImageDir)
 	if err != nil {
-		backend.HandleError(c, http.StatusInternalServerError, "error: 读取图像目录失败", err)
+		backend.HandleError(c, http.StatusInternalServerError, "failed to read images", err)
 		return
 	}
 	var images []string

@@ -81,7 +81,7 @@ func GetCharacters(c *gin.Context) {
 	c.JSON(http.StatusOK, characterMap)
 }
 
-func PatchCharacters(c *gin.Context) {
+func PutCharacters(c *gin.Context) {
 	var descriptions map[string]string
 	if err := c.ShouldBindJSON(&descriptions); err != nil {
 		backend.HandleError(c, http.StatusBadRequest, `"error":"Invalid JSON"`, err)
@@ -91,6 +91,19 @@ func PatchCharacters(c *gin.Context) {
 	if len(descriptions) <= 0 {
 		backend.HandleError(c, http.StatusBadRequest, `"error":"find no description`, nil)
 	}
-	characterMap = descriptions
+	for k, v := range descriptions {
+		characterMap[k] = v
+	}
 	c.JSON(http.StatusOK, gin.H{"message": "Descriptions updated successfully"})
+}
+
+func GetRandomAppearance(c *gin.Context) {
+	prompt := "随机生成一个二次元角色的外形描述，包括年龄发色眼睛穿着等等，使用英文输出"
+	appearance, err := llm.QueryLLM(c.Request.Context(), prompt, "", "doubao", 1, 100)
+	if err != nil {
+		logrus.Errorf("get random appearance from llm failed, err %v", err)
+		backend.HandleError(c, http.StatusBadRequest, "get random appearance from llm failed", nil)
+		return
+	}
+	c.JSON(http.StatusOK, appearance)
 }

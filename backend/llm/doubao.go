@@ -23,24 +23,25 @@ func GetDoubaoClient() *arkruntime.Client {
 
 func queryVolEngine(ctx context.Context, prompt, sys string, temperature float32) (string, error) {
 	client := GetDoubaoClient()
-	req := model.ChatCompletionRequest{
-		MaxTokens: 4000,
-		Model:     accessPoint,
-
-		Messages: []*model.ChatCompletionMessage{
-			{
-				Role: model.ChatMessageRoleSystem,
-				Content: &model.ChatCompletionMessageContent{
-					StringValue: volcengine.String(sys),
-				},
+	var M []*model.ChatCompletionMessage
+	if len(sys) > 0 {
+		M = append(M, &model.ChatCompletionMessage{
+			Role: model.ChatMessageRoleSystem,
+			Content: &model.ChatCompletionMessageContent{
+				StringValue: volcengine.String(sys),
 			},
-			{
-				Role: model.ChatMessageRoleUser,
-				Content: &model.ChatCompletionMessageContent{
-					StringValue: volcengine.String(prompt),
-				},
-			},
+		})
+	}
+	M = append(M, &model.ChatCompletionMessage{
+		Role: model.ChatMessageRoleUser,
+		Content: &model.ChatCompletionMessageContent{
+			StringValue: volcengine.String(prompt),
 		},
+	})
+	req := model.ChatCompletionRequest{
+		MaxTokens:   4000,
+		Model:       accessPoint,
+		Messages:    M,
 		Temperature: temperature,
 	}
 
