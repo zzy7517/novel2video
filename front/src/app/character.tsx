@@ -38,8 +38,8 @@ export default function CharacterExtractor() {
         setIsLoading(true)
         try {
             // 这里应该是实际的API调用来保存修改
-            await fetch('/api/save-roles', {
-                method: 'POST',
+            await fetch('http://localhost:1198/api/novel/characters', {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -55,7 +55,7 @@ export default function CharacterExtractor() {
                 })
                 return newRoles
             })
-            setEditedDescriptions({})
+            // setEditedDescriptions({})
         } catch (error) {
             console.error('Failed to save changes:', error)
         } finally {
@@ -94,7 +94,9 @@ export default function CharacterExtractor() {
                             padding: '10px',
                             marginBottom: '10px',
                             borderRadius: '5px',
-                            border: '1px solid #ddd'
+                            border: '1px solid #ddd',
+                            backgroundColor: '#f9f9f9', // 浅色背景
+                            color: '#333', // 深色文本
                         }}
                     />
                 </div>

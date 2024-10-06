@@ -11,10 +11,12 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 
 	"novel2video/backend"
+	"novel2video/backend/util"
 )
 
 func SaveCombinedFragments(c *gin.Context) {
@@ -23,17 +25,17 @@ func SaveCombinedFragments(c *gin.Context) {
 		backend.HandleError(c, http.StatusBadRequest, "Invalid request", err)
 		return
 	}
-	err := os.RemoveAll("temp/fragments")
+	err := os.RemoveAll(util.NovelFragmentsDir)
 	if err != nil {
 		backend.HandleError(c, http.StatusInternalServerError, "Failed to remove directory", err)
 		return
 	}
-	err = os.MkdirAll("temp/fragments", os.ModePerm)
+	err = os.MkdirAll(util.NovelFragmentsDir, os.ModePerm)
 	if err != nil {
 		backend.HandleError(c, http.StatusInternalServerError, "Failed to create directory", err)
 		return
 	}
-	err = saveListToFiles(fragments, "temp/fragments/")
+	err = saveListToFiles(fragments, util.NovelFragmentsDir+"/")
 	if err != nil {
 		backend.HandleError(c, http.StatusInternalServerError, "Failed to save", err)
 		return
@@ -42,12 +44,12 @@ func SaveCombinedFragments(c *gin.Context) {
 }
 
 func GetNovelFragments(c *gin.Context) {
-	err := os.RemoveAll("temp/fragments")
+	err := os.RemoveAll(util.NovelFragmentsDir)
 	if err != nil {
 		backend.HandleError(c, http.StatusInternalServerError, "Failed to remove directory", err)
 		return
 	}
-	err = os.MkdirAll("temp/fragments", os.ModePerm)
+	err = os.MkdirAll(util.NovelFragmentsDir, os.ModePerm)
 	if err != nil {
 		backend.HandleError(c, http.StatusInternalServerError, "Failed to create directory", err)
 		return
@@ -59,7 +61,7 @@ func GetNovelFragments(c *gin.Context) {
 		return
 	}
 	// 从目录中读取所有文件并返回内容
-	lines, err := readLinesFromDirectory("temp/fragments")
+	lines, err := readLinesFromDirectory(util.NovelFragmentsDir)
 	if err != nil {
 		backend.HandleError(c, http.StatusInternalServerError, "Failed to read fragments", err)
 		return
@@ -91,7 +93,7 @@ func saveLinesToFiles(fileName string) error {
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 		if line != "" {
-			filePath := fmt.Sprintf("temp/fragments/%d.txt", lineNumber)
+			filePath := fmt.Sprintf(util.NovelFragmentsDir+"/%d.txt", lineNumber)
 			err := os.WriteFile(filePath, []byte(line), 0644)
 			if err != nil {
 				return err
@@ -146,4 +148,40 @@ func readLinesFromDirectory(dir string) ([]string, error) {
 		lines = append(lines, string(content))
 	}
 	return lines, nil
+}
+
+func GetInitial(c *gin.Context) {
+	type InitialData struct {
+		Fragments []string `json:"fragments"`
+		Images    []string `json:"images"`
+		Prompts   []string `json:"prompts"`
+	}
+	novels, err := readLinesFromDirectory(util.NovelFragmentsDir)
+	if err != nil {
+		backend.HandleError(c, http.StatusInternalServerError, "Failed to read fragments", err)
+		return
+	}
+	prompts, err := readLinesFromDirectory(util.PromptsDir)
+	if err != nil {
+		backend.HandleError(c, http.StatusInternalServerError, "Failed to read fragments", err)
+		return
+	}
+	files, err := os.ReadDir(util.ImageDir)
+	if err != nil {
+		backend.HandleError(c, http.StatusInternalServerError, "error: 读取图像目录失败", err)
+		return
+	}
+	var images []string
+	now := time.Now().Unix()
+	for _, file := range files {
+		if !file.IsDir() {
+			images = append(images, filepath.Join("/images", file.Name())+fmt.Sprintf("?v=%d", now))
+		}
+	}
+	data := InitialData{
+		Fragments: novels,
+		Images:    images,
+		Prompts:   prompts,
+	}
+	c.JSON(http.StatusOK, data)
 }

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -15,18 +14,26 @@ import (
 	"novel2video/backend/util"
 )
 
+var characterMap = make(map[string]string)
+
 var extractCharacterSys = `
 	#Task: #
 	Extract characters from the novel fragment
 	
 	#Rule#
-	the extracted names should be in English
+	1. 提取出所有的人名，把人名翻译成英文输出，只需要输出英文
+	2. 所有的人名，别名，称呼，包括对话中引用到的名字都需要提取
+	3. 不要输出中文
 	
 	#Output Format:#
-	name1, name2, name3
+	name1, name2, name3, name4...
 `
 
 func GetCharacters(c *gin.Context) {
+	if len(characterMap) > 0 {
+		c.JSON(http.StatusOK, characterMap)
+		return
+	}
 	err := os.RemoveAll(util.CharacterDir)
 	if err != nil {
 		backend.HandleError(c, http.StatusInternalServerError, "Failed to remove directory", err)
@@ -52,21 +59,19 @@ func GetCharacters(c *gin.Context) {
 		}
 		var builder strings.Builder
 		for j, v := range lines[i:end] {
-			builder.WriteString(strconv.Itoa(j) + ". ")
 			builder.WriteString(fmt.Sprintf("%v", v))
 			if j != len(lines[i:end])-1 {
 				builder.WriteString("\n")
 			}
 		}
 		prompt := builder.String()
-		// logrus.Infof("prompt is %v", prompt)
 		prompts = append(prompts, prompt)
 	}
 
 	for _, p := range prompts {
-		res, err := llm.QueryGemini(c.Request.Context(), p, extractCharacterSys, "gemini-1.5-pro-002", 0.01, 8192)
+		res, err := llm.QueryLLM(c.Request.Context(), p, extractCharacterSys, "doubao", 0.01, 8192)
 		if err != nil {
-			logrus.Errorf("query gemini failed, err is %v", err)
+			logrus.Errorf("query doubao failed, err is %v", err)
 			continue
 		}
 		for _, ch := range strings.Split(res, ",") {
@@ -77,5 +82,15 @@ func GetCharacters(c *gin.Context) {
 }
 
 func PatchCharacters(c *gin.Context) {
+	var descriptions map[string]string
+	if err := c.ShouldBindJSON(&descriptions); err != nil {
+		backend.HandleError(c, http.StatusBadRequest, `"error":"Invalid JSON"`, err)
+		return
+	}
 
+	if len(descriptions) <= 0 {
+		backend.HandleError(c, http.StatusBadRequest, `"error":"find no description`, nil)
+	}
+	characterMap = descriptions
+	c.JSON(http.StatusOK, gin.H{"message": "Descriptions updated successfully"})
 }

@@ -10,8 +10,24 @@ export default function AIImageGenerator() {
     const [loaded, setLoaded] = useState<boolean>(false);
 
     useEffect(() => {
-        extractChapterFragments();
+        initialize();
     }, []);
+
+    const initialize = () => {
+        fetch('http://localhost:1198/api/novel/initial')
+            .then(response => response.json())
+            .then(data => {
+                setFragments(data.fragments || []);
+                const updatedImages = (data.images || []).map((imageUrl:string) => `http://localhost:1198${imageUrl}`);
+                setImages(updatedImages);
+                setPrompts(data.prompts || []);
+                setLoaded(true);
+            })
+            .catch(error => {
+                console.error('Error initializing data:', error);
+                setLoaded(false);
+            });
+    };
 
     const extractChapterFragments = () => {
         fetch('http://localhost:1198/api/get/novel/fragments')

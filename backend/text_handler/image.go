@@ -56,13 +56,6 @@ func GetLocalImages(c *gin.Context) {
 			matches := re.FindStringSubmatch(file.Name())
 			if len(matches) > 1 {
 				key := matches[1]
-				// absPath, err := filepath.Abs(filepath.Join(util.ImageDir, file.Name()))
-				//if err != nil {
-				//	c.JSON(http.StatusInternalServerError, gin.H{"error": "获取文件绝对路径失败"})
-				//	return
-				//}
-				// todo
-
 				absPath := filepath.Join("/images", file.Name())
 				imageMap[key] = absPath + fmt.Sprintf("?v=%d", now)
 			}

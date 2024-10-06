@@ -33,15 +33,17 @@ func main() {
 		AllowCredentials: true,
 	}))
 
+	r.Static("/images", util.ImageDir)
+
 	r.GET("/api/get/novel/fragments", text_handler.GetNovelFragments)       // 分割文本
 	r.POST("/api/save/novel/fragments", text_handler.SaveCombinedFragments) // 合并文本
 	r.GET("/api/get/novel/prompts", text_handler.ExtractPromptFromTexts)    // 提取文生图prompt
 	r.POST("/api/novel/images", text_handler.GenerateImage)                 // 一键生成
 	r.GET("/api/novel/images", text_handler.GetLocalImages)                 // 刷新图片
 	r.GET("/api/novel/characters", text_handler.GetCharacters)              // 提取角色
-	r.PATCH("/api/novel/characters", text_handler.PatchCharacters)          // 修改角色
+	r.PUT("/api/novel/characters", text_handler.PatchCharacters)            // 修改角色
+	r.GET("/api/novel/initial", text_handler.GetInitial)
 
-	r.Static("/images", util.ImageDir)
 	err := r.Run("localhost:1198")
 	if err != nil {
 		return
