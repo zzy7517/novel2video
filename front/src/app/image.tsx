@@ -8,6 +8,7 @@ export default function AIImageGenerator() {
     const [fragments, setFragments] = useState<string[]>([]);
     const [prompts, setPrompts] = useState<string[]>([]);
     const [loaded, setLoaded] = useState<boolean>(false);
+    const [promptsEn, setPromptsEn] = useState<string[]>([]);
 
     useEffect(() => {
         initialize();
@@ -21,6 +22,7 @@ export default function AIImageGenerator() {
                 const updatedImages = (data.images || []).map((imageUrl:string) => `http://localhost:1198${imageUrl}`);
                 setImages(updatedImages);
                 setPrompts(data.prompts || []);
+                setPromptsEn(data.fragments.map(() => "")); // Initialize attachments
                 setLoaded(true);
             })
             .catch(error => {
@@ -131,6 +133,28 @@ export default function AIImageGenerator() {
         }
     };
 
+    const savePromptEn = async (index: number) => {
+        try {
+            const response = await fetch('http://localhost:1198/api/novel/prompt/en', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    index: index,
+                    content: promptsEn[index]
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to save attachment');
+            }
+            console.log(`Attachment for fragment ${index + 1} saved successfully.`);
+        } catch (error) {
+            console.error('Error saving attachment:', error);
+        }
+    };
+
     return (
         <div className="container">
             <div className="header">
@@ -171,6 +195,20 @@ export default function AIImageGenerator() {
                                 ></textarea>
                                 <button onClick={() => generateImage(index)}>Generate Image</button>
                             </div>
+                            <div className="attachment-section">
+                                <textarea
+                                    value={promptsEn[index]}
+                                    onChange={(e) => {
+                                        const newAttachments = [...promptsEn];
+                                        newAttachments[index] = e.target.value;
+                                        setPromptsEn(newAttachments);
+                                    }}
+                                    placeholder="Attachment"
+                                    rows={4}
+                                    className="scrollable"
+                                ></textarea>
+                                <button onClick={() => savePromptEn(index)}>Save Attachment</button>
+                            </div>
                             <div className="image-section">
                                 <Image
                                     src={images[index]}
@@ -210,8 +248,8 @@ export default function AIImageGenerator() {
                     padding: 20px;
                     margin-bottom: 20px;
                 }
-                .input-section, .description-section, .image-section {
-                    width: 30%;
+                .input-section, .description-section, .attachment-section, .image-section {
+                    width: 23%;
                 }
                 textarea {
                     width: 100%;
@@ -221,8 +259,8 @@ export default function AIImageGenerator() {
                     border-radius: 4px;
                     resize: vertical;
                     overflow-y: auto;
-                    color: #333; /* Darker font color */
-                    background-color: #fff; /* Ensure background is white */
+                    color: #333;
+                    background-color: #fff;
                 }
                 .button-group {
                     display: flex;

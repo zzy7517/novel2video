@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -87,14 +88,6 @@ func ExtractSceneFromTexts(c *gin.Context) {
 				offset++
 			}
 		}
-		// todo 再加一个api 替换名字
-		//for i, element := range t2iPrompts {
-		//	for key, value := range characterMap {
-		//		if strings.Contains(element, key) {
-		//			t2iPrompts[i] = strings.ReplaceAll(element, key, value)
-		//		}
-		//	}
-		//}
 
 		err = saveListToFiles(t2iPrompts, util.PromptsDir+"/", offset-len(t2iPrompts))
 		if err != nil {
@@ -133,4 +126,54 @@ func generateInputPrompts(list []string, step int) []string {
 		prompts = append(prompts, prompt)
 	}
 	return prompts
+}
+
+func GetPromptsEn(c *gin.Context) {
+	err := os.RemoveAll(util.PromptsEnDir)
+	if err != nil {
+		backend.HandleError(c, http.StatusInternalServerError, "Failed to remove directory", err)
+		return
+	}
+	err = os.MkdirAll(util.PromptsEnDir, os.ModePerm)
+	if err != nil {
+		backend.HandleError(c, http.StatusInternalServerError, "Failed to create directory", err)
+		return
+	}
+	lines, err := readLinesFromDirectory(util.PromptsDir)
+	if err != nil {
+		backend.HandleError(c, http.StatusInternalServerError, "Failed to read fragments", err)
+		return
+	}
+	for i, element := range lines {
+		for key, value := range characterMap {
+			if strings.Contains(element, key) {
+				lines[i] = strings.ReplaceAll(element, key, value)
+			}
+		}
+	}
+	logrus.Infof("translate prompts to English finished")
+	c.JSON(http.StatusOK, lines)
+}
+
+func SavePromptEn(c *gin.Context) {
+	type SaveRequest struct {
+		Index   int    `json:"index"`
+		Content string `json:"content"`
+	}
+	var req SaveRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		backend.HandleError(c, http.StatusBadRequest, "parse request body failed", err)
+		return
+	}
+
+	filePath := filepath.Join(util.PromptsEnDir, fmt.Sprintf("%d.txt", req.Index))
+	if err := os.MkdirAll(util.PromptsEnDir, os.ModePerm); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create directory"})
+		return
+	}
+	if err := os.WriteFile(filePath, []byte(req.Content), 0644); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to write file"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Attachment saved successfully"})
 }
