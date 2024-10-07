@@ -44,7 +44,7 @@ func GetCharacters(c *gin.Context) {
 		backend.HandleError(c, http.StatusInternalServerError, "Failed to create directory", err)
 		return
 	}
-	lines, err := readLinesFromDirectory("temp/fragments")
+	lines, err := readLinesFromDirectory(util.PromptsDir)
 	if err != nil {
 		backend.HandleError(c, http.StatusInternalServerError, "Failed to read fragments", err)
 		return

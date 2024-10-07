@@ -35,7 +35,7 @@ func SaveCombinedFragments(c *gin.Context) {
 		backend.HandleError(c, http.StatusInternalServerError, "Failed to create directory", err)
 		return
 	}
-	err = saveListToFiles(fragments, util.NovelFragmentsDir+"/")
+	err = saveListToFiles(fragments, util.NovelFragmentsDir+"/", 0)
 	if err != nil {
 		backend.HandleError(c, http.StatusInternalServerError, "Failed to save", err)
 		return
@@ -70,9 +70,9 @@ func GetNovelFragments(c *gin.Context) {
 	c.JSON(http.StatusOK, lines)
 }
 
-func saveListToFiles(in []string, path string) error {
+func saveListToFiles(in []string, path string, offset int) error {
 	for i, line := range in {
-		filePath := fmt.Sprintf(path+"%d.txt", i)
+		filePath := fmt.Sprintf(path+"%d.txt", i+offset)
 		err := os.WriteFile(filePath, []byte(line), 0644)
 		if err != nil {
 			return err

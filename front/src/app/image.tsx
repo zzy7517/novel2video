@@ -142,7 +142,7 @@ export default function AIImageGenerator() {
                     <>
                         <button onClick={extractPrompts} className="extract-prompts-button">提取文生图prompts</button>
                         <button onClick={generateAllImages} className="generate-all">一键生成</button>
-                        <button onClick={refreshImages} className="refresh-images">刷新图像</button>
+                        <button onClick={initialize} className="refresh-images">刷新</button>
                     </>
                 )}
             </div>

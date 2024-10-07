@@ -5,4 +5,5 @@ var (
 	CharacterDir      = "temp/character"
 	NovelFragmentsDir = "temp/fragments"
 	PromptsDir        = "temp/prompts"
+	PromptsEnDir      = "temp/promptsEn"
 )
