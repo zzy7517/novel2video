@@ -21,12 +21,12 @@ var extractCharacterSys = `
 	Extract characters from the novel fragment
 	
 	#Rule#
-	1. 提取出所有的人名，把人名翻译成英文输出，只需要输出英文
+	1. 提取出所有的人名
 	2. 所有的人名，别名，称呼，包括对话中引用到的名字都需要提取
-	3. 不要输出中文
+    3. 所有出现过的和人有关的称呼都需要提取
 	
 	#Output Format:#
-	name1, name2, name3, name4...
+	名字1, 名字2, 名字3, ...
 `
 
 func GetCharacters(c *gin.Context) {
@@ -97,8 +97,15 @@ func PutCharacters(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Descriptions updated successfully"})
 }
 
+var appearancePrompt = `
+随机生成动漫角色的外形描述，输出简练，以一组描述词的形式输出，每个描述用逗号隔开
+数量：一个
+包含：性别，年龄，衣着，脸型，眼睛，发色，发型
+使用英文输出`
+
+// todo 感觉这个api需要适配一下topp & topk
 func GetRandomAppearance(c *gin.Context) {
-	prompt := "随机生成一个二次元角色的外形描述，包括年龄发色眼睛穿着等等，使用英文输出"
+	prompt := appearancePrompt
 	appearance, err := llm.QueryLLM(c.Request.Context(), prompt, "", "doubao", 1, 100)
 	if err != nil {
 		logrus.Errorf("get random appearance from llm failed, err %v", err)

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, {useState} from 'react'
 
 export default function CharacterExtractor() {
     const [roles, setRoles] = useState<Record<string, string>>({})
@@ -10,7 +10,6 @@ export default function CharacterExtractor() {
     const extractRoles = async () => {
         setIsLoading(true)
         try {
-            // 这里应该是实际的API调用
             const response = await fetch('http://localhost:1198/api/novel/characters')
             const data = await response.json()
             setRoles(data)
@@ -29,10 +28,22 @@ export default function CharacterExtractor() {
         }))
     }
 
+    const generateRandomDescription = async (roleName: string) => {
+        try {
+            const response = await fetch('http://localhost:1198/api/novel/characters/random')
+            const randomDescription = await response.json()
+            setEditedDescriptions(prev => ({
+                ...prev,
+                [roleName]: randomDescription
+            }))
+        } catch (error) {
+            console.error('Failed to generate random description:', error)
+        }
+    }
+
     const saveChanges = async () => {
         setIsLoading(true)
         try {
-            // 这里应该是实际的API调用来保存修改
             await fetch('http://localhost:1198/api/novel/characters', {
                 method: 'PUT',
                 headers: {
@@ -40,7 +51,6 @@ export default function CharacterExtractor() {
                 },
                 body: JSON.stringify(editedDescriptions),
             })
-            // 更新本地状态
             setRoles(prev => {
                 const newRoles = { ...prev }
                 Object.entries(editedDescriptions).forEach(([name, description]) => {
@@ -50,7 +60,6 @@ export default function CharacterExtractor() {
                 })
                 return newRoles
             })
-            // setEditedDescriptions({})
         } catch (error) {
             console.error('Failed to save changes:', error)
         } finally {
@@ -90,10 +99,24 @@ export default function CharacterExtractor() {
                             marginBottom: '10px',
                             borderRadius: '5px',
                             border: '1px solid #ddd',
-                            backgroundColor: '#f9f9f9', // 浅色背景
-                            color: '#333', // 深色文本
+                            backgroundColor: '#f9f9f9',
+                            color: '#333',
                         }}
                     />
+                    <button
+                        onClick={() => generateRandomDescription(name)}
+                        style={{
+                            padding: '5px 10px',
+                            fontSize: '14px',
+                            backgroundColor: '#28a745',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '5px',
+                            cursor: 'pointer'
+                        }}
+                    >
+                        生成随机描述
+                    </button>
                 </div>
             ))}
             {Object.keys(roles).length > 0 && (

@@ -1,11 +1,14 @@
 module novel2video
 
-go 1.21.6
+go 1.22.2
+
+toolchain go1.23.1
 
 require (
 	cloud.google.com/go/vertexai v0.13.1
 	github.com/gin-contrib/cors v1.7.2
 	github.com/gin-gonic/gin v1.10.0
+	github.com/sashabaranov/go-openai v1.31.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/volcengine/volcengine-go-sdk v1.0.159
 	google.golang.org/api v0.196.0
@@ -39,6 +42,7 @@ require (
 	github.com/googleapis/enterprise-certificate-proxy v0.3.3 // indirect
 	github.com/googleapis/gax-go/v2 v2.13.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
+	github.com/jpoz/groq v0.0.0-20240513145022-7a02894105a0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.8 // indirect
 	github.com/kr/text v0.2.0 // indirect

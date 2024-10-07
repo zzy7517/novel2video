@@ -73,7 +73,7 @@ func getGrpcOptions() []option.ClientOption {
 	return []option.ClientOption{
 		option.WithCredentialsFile(credentialsFile),
 		option.WithGRPCDialOption(grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy":"round_robin"}`)),
-		option.WithEndpoint("asia-east1-aiplatform.googleapis.com:443"),
+		// option.WithEndpoint("asia-east1-aiplatform.googleapis.com:443"),
 		// option.WithGRPCConnectionPool(500),
 	}
 }

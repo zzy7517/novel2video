@@ -36,6 +36,7 @@ Extract scenes from the given inputs.
 
 #Output Format:#
 每行输入需要对应一行输出，每个输出用空行隔开
+如果输出的人名是中文，改成英文
 
 # 检查 #
 输出的行数是否和输入一致，如果不一致，则重新生成输出内容
@@ -47,7 +48,7 @@ func ExtractPromptFromTexts(c *gin.Context) {
 		backend.HandleError(c, http.StatusInternalServerError, "Failed to read fragments", err)
 		return
 	}
-	promptsMid := generateInputPrompts(lines, 20)
+	promptsMid := generateInputPrompts(lines, 50)
 	var t2iPrompts []string
 	for _, p := range promptsMid {
 		res, err := llm.QueryLLM(c.Request.Context(), p, sys, "doubao", 0.01, 8192)

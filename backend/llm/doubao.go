@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/volcengine/volcengine-go-sdk/service/arkruntime"
-	"github.com/volcengine/volcengine-go-sdk/service/arkruntime/model"
+	doubao "github.com/volcengine/volcengine-go-sdk/service/arkruntime/model"
 	"github.com/volcengine/volcengine-go-sdk/volcengine"
 )
 
@@ -23,22 +23,22 @@ func GetDoubaoClient() *arkruntime.Client {
 
 func queryVolEngine(ctx context.Context, prompt, sys string, temperature float32) (string, error) {
 	client := GetDoubaoClient()
-	var M []*model.ChatCompletionMessage
+	var M []*doubao.ChatCompletionMessage
 	if len(sys) > 0 {
-		M = append(M, &model.ChatCompletionMessage{
-			Role: model.ChatMessageRoleSystem,
-			Content: &model.ChatCompletionMessageContent{
+		M = append(M, &doubao.ChatCompletionMessage{
+			Role: doubao.ChatMessageRoleSystem,
+			Content: &doubao.ChatCompletionMessageContent{
 				StringValue: volcengine.String(sys),
 			},
 		})
 	}
-	M = append(M, &model.ChatCompletionMessage{
-		Role: model.ChatMessageRoleUser,
-		Content: &model.ChatCompletionMessageContent{
+	M = append(M, &doubao.ChatCompletionMessage{
+		Role: doubao.ChatMessageRoleUser,
+		Content: &doubao.ChatCompletionMessageContent{
 			StringValue: volcengine.String(prompt),
 		},
 	})
-	req := model.ChatCompletionRequest{
+	req := doubao.ChatCompletionRequest{
 		MaxTokens:   4000,
 		Model:       accessPoint,
 		Messages:    M,
