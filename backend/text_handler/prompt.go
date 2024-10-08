@@ -1,6 +1,7 @@
 package text_handler
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"os"
@@ -8,6 +9,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -144,6 +146,11 @@ func GetPromptsEn(c *gin.Context) {
 		backend.HandleError(c, http.StatusInternalServerError, "Failed to read fragments", err)
 		return
 	}
+	characterMap, err := getLocalCharactersMap(c.Request.Context())
+	if err != nil {
+		backend.HandleError(c, http.StatusInternalServerError, "Failed to get local characters", err)
+		return
+	}
 	for i, _ := range lines {
 		for key, value := range characterMap {
 			if strings.Contains(lines[i], strings.TrimSpace(key)) {
@@ -151,8 +158,46 @@ func GetPromptsEn(c *gin.Context) {
 			}
 		}
 	}
+	lines, err = translatePrompts(lines)
+	if err != nil {
+		logrus.Errorf("translate prompts failed, err %v", err)
+		backend.HandleError(c, http.StatusInternalServerError, "translate failed", err)
+		return
+	}
+	err = saveListToFiles(lines, util.PromptsEnDir+"/", 0)
+	if err != nil {
+		backend.HandleError(c, http.StatusInternalServerError, "Failed to save promptsEn", err)
+		return
+	}
 	logrus.Infof("translate prompts to English finished")
 	c.JSON(http.StatusOK, lines)
+}
+
+func translatePrompts(lines []string) (res []string, err error) {
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+	for i := range lines {
+		wg.Add(1)
+		go func(i int) {
+			defer wg.Done()
+			newValue, err := llm.LLMTranslate(context.Background(), lines[i])
+			var cnt int
+			for cnt < 3 && err != nil {
+				logrus.Errorf("translated faild, err %v", err)
+				newValue, err = llm.LLMTranslate(context.Background(), lines[i])
+				cnt++
+			}
+			if err != nil {
+				logrus.Errorf("translated faild, err %v", err)
+				return
+			}
+			mu.Lock()
+			lines[i] = newValue
+			mu.Unlock()
+		}(i)
+	}
+	wg.Wait()
+	return lines, nil
 }
 
 func SavePromptEn(c *gin.Context) {

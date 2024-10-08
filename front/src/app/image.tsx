@@ -24,7 +24,6 @@ export default function AIImageGenerator() {
                 setImages(updatedImages);
                 setPrompts(data.prompts || []);
                 setPromptsEn(data.promptsEn)
-                setPromptsEn(data.fragments.map(() => "")); // Initialize attachments
                 setLoaded(true);
             })
             .catch(error => {

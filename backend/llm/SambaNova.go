@@ -32,7 +32,7 @@ func querySambaNova(ctx context.Context, input, sys string, modelName string, te
 	}
 	messages = append(messages, map[string]string{"role": "user", "content": input})
 	requestBody := map[string]interface{}{
-		"temperature": 0.1,
+		"temperature": temperature,
 		"messages":    messages,
 		"model":       llama_405b,
 	}

@@ -40,7 +40,8 @@ func main() {
 	r.GET("/api/get/novel/prompts", text_handler.ExtractSceneFromTexts)     // 提取文生图prompt的中文描述
 	r.POST("/api/novel/images", text_handler.GenerateImage)                 // 一键生成
 	r.GET("/api/novel/images", text_handler.GetLocalImages)                 // 刷新图片
-	r.GET("/api/novel/characters", text_handler.GetCharacters)              // 提取角色
+	r.GET("/api/novel/characters", text_handler.GetNewCharacters)           // 提取角色
+	r.GET("/api/novel/characters/local", text_handler.GetLocalCharacters)   // 读取本地的角色
 	r.PUT("/api/novel/characters", text_handler.PutCharacters)              // 修改角色
 	r.GET("/api/novel/characters/random", text_handler.GetRandomAppearance) // 生成一个随机的外形描述
 	r.GET("/api/novel/initial", text_handler.GetInitial)

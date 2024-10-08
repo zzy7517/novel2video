@@ -1,16 +1,19 @@
 'use client'
 
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 
 export default function CharacterExtractor() {
     const [roles, setRoles] = useState<Record<string, string>>({})
     const [editedDescriptions, setEditedDescriptions] = useState<Record<string, string>>({})
     const [isLoading, setIsLoading] = useState(false)
 
-    const extractRoles = async () => {
+    const extractRoles = async (isLocal: boolean) => {
         setIsLoading(true)
         try {
-            const response = await fetch('http://localhost:1198/api/novel/characters')
+            const endpoint = isLocal
+                ? 'http://localhost:1198/api/novel/characters/local'
+                : 'http://localhost:1198/api/novel/characters'
+            const response = await fetch(endpoint)
             const data = await response.json()
             setRoles(data)
             setEditedDescriptions({})
@@ -68,27 +71,71 @@ export default function CharacterExtractor() {
     }
 
     return (
-        <div style={{ fontFamily: 'Arial, sans-serif', maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
-            <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>角色提取器</h1>
-            <button
-                onClick={extractRoles}
-                disabled={isLoading}
-                style={{
-                    padding: '10px 20px',
-                    fontSize: '16px',
-                    backgroundColor: '#0070f3',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '5px',
-                    cursor: 'pointer',
-                    marginBottom: '20px'
-                }}
-            >
-                {isLoading ? '加载中...' : '提取角色'}
-            </button>
+        <div style={{
+            fontFamily: 'Arial, sans-serif',
+            maxWidth: '800px',
+            margin: '0 auto',
+            padding: '20px',
+            backgroundColor: '#f7f7f7',
+            borderRadius: '8px',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+        }}>
+            <h1 style={{
+                textAlign: 'center',
+                marginBottom: '20px',
+                color: '#2c3e50'
+            }}>角色提取器</h1>
+            <div style={{
+                display: 'flex',
+                justifyContent: 'center',
+                gap: '10px',
+                marginBottom: '20px'
+            }}>
+                <button
+                    onClick={() => extractRoles(true)}
+                    disabled={isLoading}
+                    style={{
+                        padding: '10px 20px',
+                        fontSize: '16px',
+                        backgroundColor: '#27ae60',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '5px',
+                        cursor: 'pointer',
+                        transition: 'background-color 0.3s'
+                    }}
+                >
+                    {isLoading ? '加载中...' : '提取本地描述'}
+                </button>
+                <button
+                    onClick={() => extractRoles(false)}
+                    disabled={isLoading}
+                    style={{
+                        padding: '10px 20px',
+                        fontSize: '16px',
+                        backgroundColor: '#3498db',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '5px',
+                        cursor: 'pointer',
+                        transition: 'background-color 0.3s'
+                    }}
+                >
+                    {isLoading ? '加载中...' : '提取角色'}
+                </button>
+            </div>
             {Object.entries(roles).map(([name, description]) => (
-                <div key={name} style={{ marginBottom: '20px', border: '1px solid #ddd', padding: '15px', borderRadius: '5px' }}>
-                    <h3 style={{ marginTop: '0' }}>{name}</h3>
+                <div key={name} style={{
+                    marginBottom: '20px',
+                    border: '1px solid #bdc3c7',
+                    padding: '15px',
+                    borderRadius: '5px',
+                    backgroundColor: 'white'
+                }}>
+                    <h3 style={{
+                        marginTop: '0',
+                        color: '#34495e'
+                    }}>{name}</h3>
                     <textarea
                         value={editedDescriptions[name] ?? description}
                         onChange={(e) => handleDescriptionChange(name, e.target.value)}
@@ -98,9 +145,11 @@ export default function CharacterExtractor() {
                             padding: '10px',
                             marginBottom: '10px',
                             borderRadius: '5px',
-                            border: '1px solid #ddd',
-                            backgroundColor: '#f9f9f9',
-                            color: '#333',
+                            border: '1px solid #bdc3c7',
+                            backgroundColor: '#ecf0f1',
+                            color: '#2c3e50',
+                            fontSize: '14px',
+                            resize: 'vertical'
                         }}
                     />
                     <button
@@ -108,11 +157,12 @@ export default function CharacterExtractor() {
                         style={{
                             padding: '5px 10px',
                             fontSize: '14px',
-                            backgroundColor: '#28a745',
+                            backgroundColor: '#e67e22',
                             color: 'white',
                             border: 'none',
                             borderRadius: '5px',
-                            cursor: 'pointer'
+                            cursor: 'pointer',
+                            transition: 'background-color 0.3s'
                         }}
                     >
                         生成随机描述
@@ -126,11 +176,14 @@ export default function CharacterExtractor() {
                     style={{
                         padding: '10px 20px',
                         fontSize: '16px',
-                        backgroundColor: '#0070f3',
+                        backgroundColor: '#9b59b6',
                         color: 'white',
                         border: 'none',
                         borderRadius: '5px',
-                        cursor: 'pointer'
+                        cursor: 'pointer',
+                        transition: 'background-color 0.3s',
+                        display: 'block',
+                        margin: '0 auto'
                     }}
                 >
                     {isLoading ? '保存中...' : '保存修改'}

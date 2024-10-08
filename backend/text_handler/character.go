@@ -1,9 +1,12 @@
 package text_handler
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -13,8 +16,6 @@ import (
 	"novel2video/backend/llm"
 	"novel2video/backend/util"
 )
-
-var characterMap = make(map[string]string)
 
 var extractCharacterSys = `
 	#Task: #
@@ -29,11 +30,7 @@ var extractCharacterSys = `
 	名字1, 名字2, 名字3, ...
 `
 
-func GetCharacters(c *gin.Context) {
-	if len(characterMap) > 0 {
-		c.JSON(http.StatusOK, characterMap)
-		return
-	}
+func GetNewCharacters(c *gin.Context) {
 	err := os.RemoveAll(util.CharacterDir)
 	if err != nil {
 		backend.HandleError(c, http.StatusInternalServerError, "Failed to remove directory", err)
@@ -78,10 +75,62 @@ func GetCharacters(c *gin.Context) {
 			characterMap[ch] = ch
 		}
 	}
+	// 把character保存到本地
+	fullPath := filepath.Join(util.CharacterDir, "characters.txt")
+	file, err := os.Create(fullPath)
+	if err != nil {
+		logrus.WithContext(c.Request.Context()).Errorf("failed to create characters.txt %v", err)
+		backend.HandleError(c, http.StatusInternalServerError, "failed to create characters.txt", err)
+		return
+	}
+	defer file.Close()
+	encoder := json.NewEncoder(file)
+	err = encoder.Encode(characterMap)
+	if err != nil {
+		logrus.WithContext(c.Request.Context()).Errorf("failed to save characters.txt %v", err)
+		backend.HandleError(c, http.StatusInternalServerError, "failed to save characters.txt", err)
+		return
+	}
 	c.JSON(http.StatusOK, characterMap)
 }
 
+func GetLocalCharacters(c *gin.Context) {
+	m, err := getLocalCharactersMap(c.Request.Context())
+	if err != nil {
+		logrus.WithContext(c.Request.Context()).Errorf("failed to get local characters.txt %v", err)
+		backend.HandleError(c, http.StatusInternalServerError, "failed to get local characters.txt", err)
+		return
+	}
+	c.JSON(http.StatusOK, m)
+}
+
+func getLocalCharactersMap(ctx context.Context) (res map[string]string, err error) {
+	fullPath := filepath.Join(util.CharacterDir, "characters.txt")
+	file, err := os.Open(fullPath)
+	if err != nil {
+		return
+	}
+	defer file.Close()
+	var m map[string]string
+	decoder := json.NewDecoder(file)
+	err = decoder.Decode(&m)
+	if err != nil {
+		return
+	}
+	return m, nil
+}
+
 func PutCharacters(c *gin.Context) {
+	err := os.RemoveAll(util.CharacterDir)
+	if err != nil {
+		backend.HandleError(c, http.StatusInternalServerError, "Failed to remove directory", err)
+		return
+	}
+	err = os.MkdirAll(util.CharacterDir, os.ModePerm)
+	if err != nil {
+		backend.HandleError(c, http.StatusInternalServerError, "Failed to create directory", err)
+		return
+	}
 	var descriptions map[string]string
 	if err := c.ShouldBindJSON(&descriptions); err != nil {
 		backend.HandleError(c, http.StatusBadRequest, `"error":"Invalid JSON"`, err)
@@ -91,8 +140,20 @@ func PutCharacters(c *gin.Context) {
 	if len(descriptions) <= 0 {
 		backend.HandleError(c, http.StatusBadRequest, `"error":"find no description`, nil)
 	}
-	for k, v := range descriptions {
-		characterMap[k] = v
+	fullPath := filepath.Join(util.CharacterDir, "characters.txt")
+	file, err := os.Create(fullPath)
+	if err != nil {
+		logrus.WithContext(c.Request.Context()).Errorf("failed to create characters.txt %v", err)
+		backend.HandleError(c, http.StatusInternalServerError, "failed to create characters.txt", err)
+		return
+	}
+	defer file.Close()
+	encoder := json.NewEncoder(file)
+	err = encoder.Encode(descriptions)
+	if err != nil {
+		logrus.WithContext(c.Request.Context()).Errorf("failed to save characters.txt %v", err)
+		backend.HandleError(c, http.StatusInternalServerError, "failed to save characters.txt", err)
+		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "Descriptions updated successfully"})
 }
@@ -100,8 +161,10 @@ func PutCharacters(c *gin.Context) {
 var appearancePrompt = `
 随机生成动漫角色的外形描述，输出简练，以一组描述词的形式输出，每个描述用逗号隔开
 数量：一个
-包含：性别，年龄，衣着，脸型，眼睛，发色，发型
-使用英文输出`
+包含：年龄，衣着，脸型，眼睛，发色，发型等等。
+根据生成的年龄和性别，输出时在最前方标明1girl/1man/1boy/1lady等等
+使用英文输出，不要输出额外内容
+`
 
 // todo 感觉这个api需要适配一下topp & topk
 func GetRandomAppearance(c *gin.Context) {
