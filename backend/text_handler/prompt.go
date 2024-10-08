@@ -144,10 +144,10 @@ func GetPromptsEn(c *gin.Context) {
 		backend.HandleError(c, http.StatusInternalServerError, "Failed to read fragments", err)
 		return
 	}
-	for i, element := range lines {
+	for i, _ := range lines {
 		for key, value := range characterMap {
-			if strings.Contains(element, key) {
-				lines[i] = strings.ReplaceAll(element, key, value)
+			if strings.Contains(lines[i], strings.TrimSpace(key)) {
+				lines[i] = strings.ReplaceAll(lines[i], strings.TrimSpace(key), value)
 			}
 		}
 	}

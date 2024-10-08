@@ -155,6 +155,7 @@ func GetInitial(c *gin.Context) {
 		Fragments []string `json:"fragments"`
 		Images    []string `json:"images"`
 		Prompts   []string `json:"prompts"`
+		PromptsEn []string `json:"promptsEn"`
 	}
 	novels, err := readLinesFromDirectory(util.NovelFragmentsDir)
 	if err != nil {
@@ -162,6 +163,11 @@ func GetInitial(c *gin.Context) {
 		return
 	}
 	prompts, err := readLinesFromDirectory(util.PromptsDir)
+	if err != nil {
+		backend.HandleError(c, http.StatusInternalServerError, "Failed to read prompts", err)
+		return
+	}
+	promptsEn, err := readLinesFromDirectory(util.PromptsEnDir)
 	if err != nil {
 		backend.HandleError(c, http.StatusInternalServerError, "Failed to read prompts", err)
 		return
@@ -182,6 +188,7 @@ func GetInitial(c *gin.Context) {
 		Fragments: novels,
 		Images:    images,
 		Prompts:   prompts,
+		PromptsEn: promptsEn,
 	}
 	c.JSON(http.StatusOK, data)
 }

@@ -9,6 +9,7 @@ export default function AIImageGenerator() {
     const [prompts, setPrompts] = useState<string[]>([]);
     const [loaded, setLoaded] = useState<boolean>(false);
     const [promptsEn, setPromptsEn] = useState<string[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     useEffect(() => {
         initialize();
@@ -22,6 +23,7 @@ export default function AIImageGenerator() {
                 const updatedImages = (data.images || []).map((imageUrl:string) => `http://localhost:1198${imageUrl}`);
                 setImages(updatedImages);
                 setPrompts(data.prompts || []);
+                setPromptsEn(data.promptsEn)
                 setPromptsEn(data.fragments.map(() => "")); // Initialize attachments
                 setLoaded(true);
             })
@@ -155,6 +157,15 @@ export default function AIImageGenerator() {
         }
     };
 
+    const generatePromptsEn = () => {
+        fetch('http://localhost:1198/api/novel/prompts/en')
+            .then(response => response.json())
+            .then(data => {
+                setPromptsEn(data);
+            })
+            .catch(error => console.error('Error fetching prompts:', error));
+    };
+
     return (
         <div className="container">
             <div className="header">
@@ -165,6 +176,9 @@ export default function AIImageGenerator() {
                 {loaded && (
                     <>
                         <button onClick={extractPrompts} className="extract-prompts-button">提取文生图prompts</button>
+                        <button onClick={generatePromptsEn} className="generate-promptsEn" disabled={isLoading}>
+                            {isLoading ? 'Generating...' : 'Translate Prompts'}
+                        </button>
                         <button onClick={generateAllImages} className="generate-all">一键生成</button>
                         <button onClick={initialize} className="refresh-images">刷新</button>
                     </>
@@ -287,7 +301,7 @@ export default function AIImageGenerator() {
                     background-color: #ccc;
                     cursor: not-allowed;
                 }
-                .generate-all, .refresh-images {
+                .generate-all, .refresh-images, .generate-promptsEn {
                     padding: 10px 20px;
                     font-size: 16px;
                 }
