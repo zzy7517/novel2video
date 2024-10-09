@@ -3,13 +3,9 @@ package text_handler
 import (
 	"bufio"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
-	"regexp"
-	"sort"
-	"strconv"
 	"strings"
 	"time"
 
@@ -61,7 +57,7 @@ func GetNovelFragments(c *gin.Context) {
 		return
 	}
 	// 从目录中读取所有文件并返回内容
-	lines, err := readLinesFromDirectory(util.NovelFragmentsDir)
+	lines, err := util.ReadLinesFromDirectory(util.NovelFragmentsDir)
 	if err != nil {
 		backend.HandleError(c, http.StatusInternalServerError, "Failed to read fragments", err)
 		return
@@ -104,52 +100,6 @@ func saveLinesToFiles(fileName string) error {
 	return scanner.Err()
 }
 
-func readLinesFromDirectory(dir string) ([]string, error) {
-	files, err := ioutil.ReadDir(dir)
-	if err != nil {
-		return nil, err
-	}
-	// 按照数字顺序从小到大读取
-	// 正则表达式用于提取文件名中的数字
-	re := regexp.MustCompile(`\d+`)
-
-	// 创建一个切片来存储文件名和对应的数字
-	type fileWithNumber struct {
-		name   string
-		number int
-	}
-
-	var fileList []fileWithNumber
-
-	for _, file := range files {
-		if !file.IsDir() && strings.HasSuffix(file.Name(), ".txt") {
-			matches := re.FindStringSubmatch(file.Name())
-			if len(matches) > 0 {
-				number, err := strconv.Atoi(matches[0])
-				if err == nil {
-					fileList = append(fileList, fileWithNumber{name: file.Name(), number: number})
-				}
-			}
-		}
-	}
-
-	sort.Slice(fileList, func(i, j int) bool {
-		return fileList[i].number < fileList[j].number
-	})
-
-	var lines []string
-	for _, file := range fileList {
-		content, err := os.ReadFile(filepath.Join(dir, file.name))
-		if err != nil {
-			// 打印错误并继续处理其他文件
-			fmt.Printf("Error reading file %s: %v\n", file.name, err)
-			continue
-		}
-		lines = append(lines, string(content))
-	}
-	return lines, nil
-}
-
 func GetInitial(c *gin.Context) {
 	type InitialData struct {
 		Fragments []string `json:"fragments"`
@@ -157,22 +107,22 @@ func GetInitial(c *gin.Context) {
 		Prompts   []string `json:"prompts"`
 		PromptsEn []string `json:"promptsEn"`
 	}
-	novels, err := readLinesFromDirectory(util.NovelFragmentsDir)
+	novels, err := util.ReadLinesFromDirectory(util.NovelFragmentsDir)
 	if err != nil {
 		backend.HandleError(c, http.StatusInternalServerError, "Failed to read fragments", err)
 		return
 	}
-	prompts, err := readLinesFromDirectory(util.PromptsDir)
+	prompts, err := util.ReadLinesFromDirectory(util.PromptsDir)
 	if err != nil {
 		backend.HandleError(c, http.StatusInternalServerError, "Failed to read prompts", err)
 		return
 	}
-	promptsEn, err := readLinesFromDirectory(util.PromptsEnDir)
+	promptsEn, err := util.ReadLinesFromDirectory(util.PromptsEnDir)
 	if err != nil {
 		backend.HandleError(c, http.StatusInternalServerError, "Failed to read prompts", err)
 		return
 	}
-	files, err := os.ReadDir(util.ImageDir)
+	files, err := util.ReadFilesFromDirectory(util.ImageDir)
 	if err != nil {
 		backend.HandleError(c, http.StatusInternalServerError, "failed to read images", err)
 		return

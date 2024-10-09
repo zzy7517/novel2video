@@ -26,7 +26,7 @@ func GenerateImage(c *gin.Context) {
 		backend.HandleError(c, http.StatusInternalServerError, "Failed to create directory", err)
 		return
 	}
-	lines, err := readLinesFromDirectory("temp/prompts")
+	lines, err := util.ReadLinesFromDirectory(util.PromptsEnDir)
 	if err != nil {
 		backend.HandleError(c, http.StatusInternalServerError, "Failed to read fragments", err)
 		return

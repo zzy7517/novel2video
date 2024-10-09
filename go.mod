@@ -11,6 +11,7 @@ require (
 	github.com/sashabaranov/go-openai v1.31.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/volcengine/volcengine-go-sdk v1.0.159
+	github.com/wychl/edgetts v0.0.0-20240506100246-10d5af1b0618
 	google.golang.org/api v0.196.0
 	google.golang.org/grpc v1.66.0
 )
@@ -35,12 +36,14 @@ require (
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.22.1 // indirect
+	github.com/go-resty/resty/v2 v2.12.0 // indirect
 	github.com/goccy/go-json v0.10.3 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/google/s2a-go v0.1.8 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.3.3 // indirect
 	github.com/googleapis/gax-go/v2 v2.13.0 // indirect
+	github.com/gorilla/websocket v1.5.1 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.8 // indirect

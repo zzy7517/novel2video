@@ -1,11 +1,15 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, {useEffect, useState} from 'react'
 
 export default function CharacterExtractor() {
     const [roles, setRoles] = useState<Record<string, string>>({})
     const [editedDescriptions, setEditedDescriptions] = useState<Record<string, string>>({})
     const [isLoading, setIsLoading] = useState(false)
+
+    useEffect(() => {
+        extractRoles(true);
+    }, []);
 
     const extractRoles = async (isLocal: boolean) => {
         setIsLoading(true)

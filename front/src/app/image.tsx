@@ -99,19 +99,28 @@ export default function AIImageGenerator() {
 
         const newFragments = [...fragments];
         const newImages = [...images];
+        const newPrompts = [...prompts]
+        const newPromptsEn = [...promptsEn]
 
         if (direction === 'up') {
             newFragments[index - 1] += ' ' + newFragments[index];
             newFragments.splice(index, 1);
             newImages.splice(index, 1);
+            newPrompts.splice(index, 1)
+            newPromptsEn.splice(index, 1)
         } else if (direction === 'down') {
             newFragments[index] += ' ' + newFragments[index + 1];
             newFragments.splice(index + 1, 1);
             newImages.splice(index + 1, 1);
+            newPrompts.splice(index+1, 1)
+            newPromptsEn.splice(index+1, 1)
         }
 
         setFragments(newFragments);
         setImages(newImages);
+        setPromptsEn(prompts)
+        setPrompts(prompts)
+        // todo 是不是最好都重新保存一下
         saveFragments(newFragments);
     };
 
@@ -165,6 +174,21 @@ export default function AIImageGenerator() {
             .catch(error => console.error('Error fetching prompts:', error));
     };
 
+    const generateAudio = () => {
+        fetch('http://localhost:1198/api/novel/audio', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ fragments })
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Audio generation initiated');
+            })
+            .catch(error => console.error('Error generating audio:', error));
+    };
+
     return (
         <div className="container">
             <div className="header">
@@ -180,6 +204,7 @@ export default function AIImageGenerator() {
                         </button>
                         <button onClick={generateAllImages} className="generate-all">一键生成</button>
                         <button onClick={initialize} className="refresh-images">刷新</button>
+                        <button onClick={generateAudio} className="generate-audio">生成音频</button>
                     </>
                 )}
             </div>
@@ -300,7 +325,7 @@ export default function AIImageGenerator() {
                     background-color: #ccc;
                     cursor: not-allowed;
                 }
-                .generate-all, .refresh-images, .generate-promptsEn {
+                .generate-all, .refresh-images, .generate-promptsEn, .generate-audio {
                     padding: 10px 20px;
                     font-size: 16px;
                 }

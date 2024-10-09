@@ -27,7 +27,7 @@ var extractCharacterSys = `
     3. 所有出现过的和人有关的称呼都需要提取
 	
 	#Output Format:#
-	名字1, 名字2, 名字3, ...
+	名字1/名字2/名字3/...
 `
 
 func GetNewCharacters(c *gin.Context) {
@@ -41,7 +41,7 @@ func GetNewCharacters(c *gin.Context) {
 		backend.HandleError(c, http.StatusInternalServerError, "Failed to create directory", err)
 		return
 	}
-	lines, err := readLinesFromDirectory(util.PromptsDir)
+	lines, err := util.ReadLinesFromDirectory(util.PromptsDir)
 	if err != nil {
 		backend.HandleError(c, http.StatusInternalServerError, "Failed to read fragments", err)
 		return
@@ -71,7 +71,7 @@ func GetNewCharacters(c *gin.Context) {
 			logrus.Errorf("query doubao failed, err is %v", err)
 			continue
 		}
-		for _, ch := range strings.Split(res, ",") {
+		for _, ch := range strings.Split(res, "/") {
 			characterMap[ch] = ch
 		}
 	}
@@ -161,8 +161,13 @@ func PutCharacters(c *gin.Context) {
 var appearancePrompt = `
 随机生成动漫角色的外形描述，输出简练，以一组描述词的形式输出，每个描述用逗号隔开
 数量：一个
-包含：年龄，衣着，脸型，眼睛，发色，发型等等。
+包含：衣着，眼睛，发色，发型等等。
+生成男性和女性的概率都为50%
 根据生成的年龄和性别，输出时在最前方标明1girl/1man/1boy/1lady等等
+示例1: 1boy, white school uniform, brown eyes, short messy black hair.
+示例2: 1girl, short skirt, skinny, blue eyes, blonde hair, twin tails, knee-high socks
+示例3: 1man, Navy suit, Green eyes, short, slicked-back blonde hair
+示例4: 1elderly man, Grey cardigan, Grey eyes, balding with white hair
 使用英文输出，不要输出额外内容
 `
 
