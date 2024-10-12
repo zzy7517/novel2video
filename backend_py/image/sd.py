@@ -6,7 +6,7 @@ import base64
 from backend_py.util.constant import ImageDir
 
 async def generate_image(prompt: str, seed: int, width: int, height: int, order):
-    url = "http://127.0.0.1:7860"
+    url = "http://10.193.239.248:7860"
     payload = {
         "prompt": "anime" +  prompt + " <lora:超级玄幻:0.7> ",
         "negative_prompt": "(painting by bad-artist-anime:0.9), (painting by bad-artist:0.9), watermark, text, error, blurry, jpeg artifacts, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, artist name,deformed,distorted,disfigured,doll,poorly drawn,bad anatomy,wrong anatomy,bad hand,bad fingers,NSFW",

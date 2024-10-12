@@ -1,3 +1,4 @@
+import asyncio
 from flask import Flask, jsonify, request
 import os
 import re
@@ -19,29 +20,26 @@ def make_dir(directory):
 def handle_error(message, err):
     return jsonify({"error": message}), 500
 
+async def async_generate_images(lines):
+    for i, p in enumerate(lines):
+        try:
+            await generate_image(p, 114514191981, 540, 960, i)
+        except Exception as e:
+            print("Error:", e)
+                
 def generate_images():
     try:
         remove_all(ImageDir)
         make_dir(ImageDir)
     except Exception as e:
         return handle_error("Failed to manage directory", e)
-
     try:
-        lines = read_lines_from_directory(PromptsEnDir)
+        lines, err = read_lines_from_directory(PromptsEnDir)
+        if err:
+            return handle_error("Failed to read fragments", err)
+        asyncio.run(async_generate_images(lines))
     except Exception as e:
         return handle_error("Failed to read fragments", e)
-
-    def generate_images():
-        for i, p in enumerate(lines):
-            try:
-                generate_image(p, 114514191981, 540, 960, i)
-            except Exception as e:
-                print("Error:", e)
-
-    # Run the image generation in a separate thread
-    thread = Thread(target=generate_images)
-    thread.start()
-
     return jsonify({"status": "Image generation started"}), 200
 
 def get_local_images():

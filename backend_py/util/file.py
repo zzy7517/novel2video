@@ -67,7 +67,7 @@ def read_files_from_directory(dir_path: str) -> List[os.DirEntry]:
     file_list.sort(key=lambda x: x[1])
     
     # Extract sorted os.DirEntry objects
-    sorted_files = [entry for entry, _ in file_list]
+    sorted_files = [entry.name for entry, _ in file_list]
     
     return sorted_files
 

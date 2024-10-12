@@ -55,8 +55,3 @@ def query_silicon_flow(input_text, sys_text, temperature):
         return response_data['choices'][0]['message']['content']
     else:
         raise Exception("No choices found in response.")
-
-# Example usage:
-# api_key = "your_api_key_here"
-# result = query_silicon_flow("Hello, world!", "", 0.5, api_key)
-# print(result)

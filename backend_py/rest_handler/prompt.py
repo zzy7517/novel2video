@@ -1,3 +1,4 @@
+import json
 from flask import Flask, request, jsonify
 import os
 import shutil
@@ -5,7 +6,8 @@ import re
 import concurrent.futures
 import logging
 
-from backend_py.util.constant import NovelFragmentsDir, PromptsDir, PromptsEnDir
+from backend_py.llm.llm import llm_translate, query_llm
+from backend_py.util.constant import CharacterDir, NovelFragmentsDir, PromptsDir, PromptsEnDir
 from backend_py.util.file import read_lines_from_directory, save_list_to_files
 
 sys = """
@@ -76,6 +78,7 @@ output
 输出的行数是否和输入一致，如果不一致，则重新生成输出内容
 """
 
+fragmentsLen = 30
 
 # Function to generate input prompts
 def generate_input_prompts(lines, step):
@@ -90,8 +93,8 @@ def generate_input_prompts(lines, step):
 # Function to translate prompts
 def translate_prompts(lines):
     def translate_line(line):
-        # Simulate translation
-        return line[::-1]  # Example: reverse the line as a placeholder for translation
+        res = llm_translate(line)
+        return res
 
     with concurrent.futures.ThreadPoolExecutor() as executor:
         translated_lines = list(executor.map(translate_line, lines))
@@ -99,7 +102,9 @@ def translate_prompts(lines):
 
 def extract_scene_from_texts():
     try:
-        lines = read_lines_from_directory(NovelFragmentsDir)
+        lines, err = read_lines_from_directory(NovelFragmentsDir)
+        if err:
+            return jsonify({"error": "Failed to read fragments"}), 500
     except Exception as e:
         return jsonify({"error": "Failed to read fragments"}), 500
 
@@ -109,25 +114,25 @@ def extract_scene_from_texts():
     except Exception as e:
         return jsonify({"error": "Failed to manage directory"}), 500
 
-    prompts_mid = generate_input_prompts(lines, 30)
+    prompts_mid = generate_input_prompts(lines, fragmentsLen)
     offset = 0
     for p in prompts_mid:
-        # Simulate LLM query
-        res = p  # Placeholder for LLM response
+        res = query_llm(p, sys, "x", 0.01, 8192)
         lines = res.split("\n")
         re_pattern = re.compile(r'^\d+\.\s*')
         t2i_prompts = [re_pattern.sub('', line) for line in lines if line.strip()]
         offset += len(t2i_prompts)
-
         try:
-            save_list_to_files(t2i_prompts, PromptsDir, offset - len(t2i_prompts))
+            save_list_to_files(t2i_prompts, PromptsDir + "/", offset - len(t2i_prompts))
         except Exception as e:
             return jsonify({"error": "save list to file failed"}), 500
 
-    try:
-        lines = read_lines_from_directory(PromptsDir)
-    except Exception as e:
+    
+    lines, err = read_lines_from_directory(PromptsDir)
+    if err:
         return jsonify({"error": "Failed to read fragments"}), 500
+    
+       
 
     logging.info("extract prompts from novel fragments finished")
     return jsonify(lines), 200
@@ -139,18 +144,22 @@ def get_prompts_en():
     except Exception as e:
         return jsonify({"error": "Failed to manage directory"}), 500
 
-    try:
-        lines = read_lines_from_directory(PromptsDir)
-    except Exception as e:
+    
+    lines, err = read_lines_from_directory(PromptsDir)
+    if err:
         return jsonify({"error": "Failed to read fragments"}), 500
 
-    # Simulate character map
-    character_map = {"character1": "Character One", "character2": "Character Two"}
+    try:
+        with open(os.path.join(CharacterDir, 'characters.txt'), 'r') as file:
+                character_map = json.load(file)
 
-    for i, line in enumerate(lines):
-        for key, value in character_map.items():
-            if key in line:
-                lines[i] = line.replace(key, value)
+        for i, line in enumerate(lines):
+            for key, value in character_map.items():
+                if key in line:
+                    lines[i] = line.replace(key, value)
+    except Exception as e:
+        logging.error(f"translate prompts failed, err {e}")
+        return jsonify({"error": "translate failed"}), 500
 
     try:
         lines = translate_prompts(lines)
@@ -159,7 +168,7 @@ def get_prompts_en():
         return jsonify({"error": "translate failed"}), 500
 
     try:
-        save_list_to_files(lines, PromptsEnDir, 0)
+        save_list_to_files(lines, PromptsEnDir + "/", 0)
     except Exception as e:
         return jsonify({"error": "Failed to save promptsEn"}), 500
 
