@@ -1,8 +1,8 @@
 import requests
 from typing import Tuple, Optional
 
-from backend_py.llm.sambanova import query_samba_nova
-from backend_py.llm.siliconflow import query_silicon_flow
+from backend.llm.sambanova import query_samba_nova
+from backend.llm.siliconflow import query_silicon_flow
 
 def query_llm(input_text: str, system_content: str, model_name: str, temperature: float, max_output_tokens: int) -> str:
     # Example of querying a specific model

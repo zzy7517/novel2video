@@ -3,7 +3,7 @@ import logging
 import requests
 import base64
 
-from backend_py.util.constant import ImageDir
+from backend.util.constant import ImageDir
 
 async def generate_image(prompt: str, seed: int, width: int, height: int, order):
     url = "http://10.193.239.248:7860"

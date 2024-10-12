@@ -6,9 +6,9 @@ import time
 import shutil
 from threading import Thread
 
-from backend_py.image.sd import generate_image
-from backend_py.util.constant import ImageDir, PromptsEnDir
-from backend_py.util.file import read_lines_from_directory
+from backend.image.sd import generate_image
+from backend.util.constant import ImageDir, PromptsEnDir
+from backend.util.file import read_lines_from_directory
 
 
 def remove_all(directory):

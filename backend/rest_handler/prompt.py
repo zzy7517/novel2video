@@ -6,9 +6,9 @@ import re
 import concurrent.futures
 import logging
 
-from backend_py.llm.llm import llm_translate, query_llm
-from backend_py.util.constant import CharacterDir, NovelFragmentsDir, PromptsDir, PromptsEnDir
-from backend_py.util.file import read_lines_from_directory, save_list_to_files
+from backend.llm.llm import llm_translate, query_llm
+from backend.util.constant import CharacterDir, NovelFragmentsDir, PromptsDir, PromptsEnDir
+from backend.util.file import read_lines_from_directory, save_list_to_files
 
 sys = """
 #Task: #

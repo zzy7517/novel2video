@@ -3,8 +3,8 @@ import shutil
 
 import edge_tts
 
-from backend_py.util.constant import AudioDir, NovelFragmentsDir
-from backend_py.util.file import read_lines_from_directory
+from backend.util.constant import AudioDir, NovelFragmentsDir
+from backend.util.file import read_lines_from_directory
 
 
 async def by_edge_tts():

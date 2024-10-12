@@ -3,7 +3,7 @@ import requests
 import json
 from typing import Tuple, Optional
 
-from backend_py.llm.keys import SAMBA_NOVA_API_KEY
+from backend.llm.keys import SAMBA_NOVA_API_KEY
 
 LLAMA_405B = "Meta-Llama-3.1-405B-Instruct"
 

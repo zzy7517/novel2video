@@ -4,8 +4,8 @@ import logging
 from flask import Flask, request, jsonify
 from pathlib import Path
 
-from backend_py.llm.llm import query_llm
-from backend_py.util.constant import CharacterDir, PromptsDir
+from backend.llm.llm import query_llm
+from backend.util.constant import CharacterDir, PromptsDir
 
 extract_character_sys = """
 	#Task: #

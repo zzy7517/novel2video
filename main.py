@@ -2,12 +2,12 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import logging
 
-from backend_py.rest_handler.character import get_local_characters, get_new_characters, get_random_appearance, put_characters
-from backend_py.rest_handler.image import generate_images, get_local_images
-from backend_py.rest_handler.initial import get_initial, get_novel_fragments, save_combined_fragments
-from backend_py.rest_handler.prompt import extract_scene_from_texts, get_prompts_en, save_prompt_en
-from backend_py.tts.tts import generate_audio_files
-from backend_py.util.constant import ImageDir
+from backend.rest_handler.character import get_local_characters, get_new_characters, get_random_appearance, put_characters
+from backend.rest_handler.image import generate_images, get_local_images
+from backend.rest_handler.initial import get_initial, get_novel_fragments, save_combined_fragments
+from backend.rest_handler.prompt import extract_scene_from_texts, get_prompts_en, save_prompt_en
+from backend.tts.tts import generate_audio_files
+from backend.util.constant import ImageDir
 
 app = Flask(__name__,static_url_path='/images', static_folder=ImageDir)
 
