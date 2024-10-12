@@ -1,15 +1,16 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import logging
 
 from backend.rest_handler.character import get_local_characters, get_new_characters, get_random_appearance, put_characters
 from backend.rest_handler.image import generate_images, get_local_images
-from backend.rest_handler.initial import get_initial, get_novel_fragments, save_combined_fragments
+from backend.rest_handler.initial import get_initial, get_novel_fragments, load_novel, save_combined_fragments, save_novel
 from backend.rest_handler.prompt import extract_scene_from_texts, get_prompts_en, save_prompt_en
+from backend.rest_handler.video import generate_video, get_video
 from backend.tts.tts import generate_audio_files
 from backend.util.constant import ImageDir
 
-app = Flask(__name__,static_url_path='/images', static_folder=ImageDir)
+app = Flask(__name__,static_url_path='/images', static_folder="temp")
 
 CORS(app)
 
@@ -80,29 +81,29 @@ def api_get_random_appearance():
 
 # 获取小说文本
 @app.route('/api/novel/load', methods=['GET'])
-def load_novel():
-    try:
-        with open('novel.txt', 'r', encoding='utf-8') as file:
-            content = file.read()
-        return jsonify({'content': content}), 200
-    except FileNotFoundError:
-        return jsonify({'content': ''}), 200  
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+def api_load_novel():
+    return load_novel()
 
 # 保存小说文本
 @app.route('/api/novel/save', methods=['POST'])
-def save_novel():
-    try:
-        data = request.get_json()
-        content = data.get('content', '')
+def api_save_novel():
+    return save_novel()
 
-        with open('novel.txt', 'w', encoding='utf-8') as file:
-            file.write(content)
+@app.route('/api/novel/video', methods=['GET'])
+def api_get_video():
+   return get_video()
 
-        return jsonify({'message': '保存成功！'}), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+@app.route('/api/novel/video', methods=['POST'])
+def api_generate_video():
+   return generate_video()
+
+@app.route('/videos/<path:filename>')
+def serve_videos(filename):
+    return send_from_directory('temp/videos', filename)
+
+@app.route('/images/<path:filename>')
+def serve_images(filename):
+    return send_from_directory(ImageDir, filename)
 
 if __name__ == '__main__':
     app.run(host='localhost', port=1198)

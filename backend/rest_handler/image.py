@@ -8,14 +8,7 @@ from threading import Thread
 
 from backend.image.sd import generate_image
 from backend.util.constant import ImageDir, PromptsEnDir
-from backend.util.file import read_lines_from_directory
-
-
-def remove_all(directory):
-    shutil.rmtree(directory, ignore_errors=True)
-
-def make_dir(directory):
-    os.makedirs(directory, exist_ok=True)
+from backend.util.file import make_dir, read_lines_from_directory, remove_all
 
 def handle_error(message, err):
     return jsonify({"error": message}), 500

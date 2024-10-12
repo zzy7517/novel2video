@@ -75,10 +75,10 @@ def get_initial():
         files = os.listdir(ImageDir)
         files = read_files_from_directory(ImageDir)
         images = []
-        now = int(time.time())  # Get the current Unix timestamp
+        now = int(time.time())  
 
         for file in files:
-            if not os.path.isdir(file):  # Check if the file is not a directory
+            if not os.path.isdir(file):  
                 image_path = os.path.join("/images", file) + f"?v={now}"
                 images.append(image_path)
 

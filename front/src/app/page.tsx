@@ -4,6 +4,7 @@ import { useState } from "react";
 import AIImageGenerator from "./image";
 import TextEditor from "@/app/text";
 import CharacterExtractor from "@/app/character";
+import VideoGenerator from "./video";
 
 export default function Home() {
     const [activeTab, setActiveTab] = useState("text");
@@ -20,11 +21,15 @@ export default function Home() {
                 <div style={styles.item} onClick={() => setActiveTab("image")}>
                     提取图像
                 </div>
+                <div style={styles.item} onClick={() => setActiveTab("video")}>
+                    生成视频
+                </div>
             </div>
             <div style={styles.content}>
                 {activeTab === "text" && <TextEditor/>}
                 {activeTab === "character" && <CharacterExtractor/>}
                 {activeTab === "image" && <AIImageGenerator/>}
+                {activeTab === "video" && <VideoGenerator/>}
             </div>
         </div>
     );

@@ -17,13 +17,13 @@ async def generate_image(prompt: str, seed: int, width: int, height: int, order)
         "override_settings": {
             "sd_vae": "Automatic",
         },
-        "enable_hr": True,
-        "denoising_strength": 0.7,
-        "hr_upscaler": "Latent",
-        "hr_resize_x": 1024,
-        "hr_resize_y": 1024,
-        "hr_sampler_name": "Euler",
-        "hr_second_pass_steps": 10,
+        # "enable_hr": True,
+        # "denoising_strength": 0.7,
+        # "hr_upscaler": "Latent",
+        # "hr_resize_x": 1024,
+        # "hr_resize_y": 1024,
+        # "hr_sampler_name": "Euler",
+        # "hr_second_pass_steps": 10,
     }
 
     try:

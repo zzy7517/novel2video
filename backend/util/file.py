@@ -1,5 +1,6 @@
 import os
 import re
+import shutil
 from typing import List, Tuple
 
 def read_lines_from_directory(directory):
@@ -80,3 +81,9 @@ def save_list_to_files(input_list, path, offset):
     except Exception as e:
         return e
     return None
+
+def remove_all(directory):
+    shutil.rmtree(directory, ignore_errors=True)
+
+def make_dir(directory):
+    os.makedirs(directory, exist_ok=True)
