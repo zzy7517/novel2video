@@ -1,14 +1,38 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 export default function TextEditor() {
     const [content, setContent] = useState('')
     const [message, setMessage] = useState('')
 
+    useEffect(() => {
+        loadContent()
+    }, [])
+
+    const loadContent = async () => {
+        try {
+            const response = await fetch(`http://localhost:1198/api/novel/load`)
+            if (response.ok) {
+                const data = await response.json()
+                if (data.content) {
+                    setContent(data.content)
+                    setMessage('内容已加载')
+                } else {
+                    setContent('')
+                    setMessage('没有找到保存的内容')
+                }
+            } else {
+                throw new Error('加载失败')
+            }
+        } catch (error) {
+            setMessage('加载失败，请稍后重试。')
+        }
+    }
+
     const handleSave = async () => {
         try {
-            const response = await fetch('/api/save', {
+            const response = await fetch('http://localhost:1198/api/novel/save', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -35,7 +59,7 @@ export default function TextEditor() {
             boxShadow: '0 0 10px rgba(0,0,0,0.1)',
             borderRadius: '8px',
         }}>
-            <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>文本编辑器</h1>
+            <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>小说文本</h1>
             <textarea
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
@@ -63,7 +87,7 @@ export default function TextEditor() {
                     cursor: 'pointer',
                 }}
             >
-                保存内容
+                保存
             </button>
             {message && (
                 <p style={{

@@ -78,5 +78,31 @@ def api_put_characters():
 def api_get_random_appearance():
     return get_random_appearance()
 
+# 获取小说文本
+@app.route('/api/novel/load', methods=['GET'])
+def load_novel():
+    try:
+        with open('novel.txt', 'r', encoding='utf-8') as file:
+            content = file.read()
+        return jsonify({'content': content}), 200
+    except FileNotFoundError:
+        return jsonify({'content': ''}), 200  
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+# 保存小说文本
+@app.route('/api/novel/save', methods=['POST'])
+def save_novel():
+    try:
+        data = request.get_json()
+        content = data.get('content', '')
+
+        with open('novel.txt', 'w', encoding='utf-8') as file:
+            file.write(content)
+
+        return jsonify({'message': '保存成功！'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 if __name__ == '__main__':
     app.run(host='localhost', port=1198)
