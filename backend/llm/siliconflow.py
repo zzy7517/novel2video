@@ -1,6 +1,5 @@
 import logging
 import requests
-import json
 import threading
 
 from backend.llm.keys import SILICON_FLOW_API_KEY
@@ -14,7 +13,7 @@ silicon_flow_free_models = [
     "internlm/internlm2_5-7b-chat",
     "google/gemma-2-9b-it",
     "meta-llama/Meta-Llama-3-8B-Instruct",
-    "meta-llama/Meta-Llama-3.1-8B-Instruct",
+    #"meta-llama/Meta-Llama-3.1-8B-Instruct",
 ]
 
 model_index = 0

@@ -23,7 +23,7 @@ export default function AIImageGenerator() {
                 const updatedImages = (data.images || []).map((imageUrl:string) => `http://localhost:1198${imageUrl}`);
                 setImages(updatedImages);
                 setPrompts(data.prompts || []);
-                setPromptsEn(data.promptsEn)
+                setPromptsEn(data.promptsEn || [])
                 setLoaded(true);
             })
             .catch(error => {
@@ -50,7 +50,7 @@ export default function AIImageGenerator() {
         fetch('http://localhost:1198/api/get/novel/prompts')
             .then(response => response.json())
             .then(data => {
-                setPrompts(data);
+                setPrompts(data || []);
             })
             .catch(error => console.error('Error fetching prompts:', error));
     };

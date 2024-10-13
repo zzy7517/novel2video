@@ -13,7 +13,7 @@ def handle_error(status_code, message, error):
 
 def save_lines_to_files(file_name):
     try:
-        with open(file_name, 'r') as file:
+        with open(file_name, 'r', encoding='utf-8') as file:
             lines = file.readlines()
             for i, line in enumerate(lines):
                 line = line.strip()
@@ -32,9 +32,10 @@ def save_combined_fragments():
         return handle_error(400, "Invalid request", "Expected a list of strings")
 
     try:
-        shutil.rmtree(NovelFragmentsDir, ignore_errors=True)
+        if os.path.exists(NovelFragmentsDir):
+            shutil.rmtree(NovelFragmentsDir, ignore_errors=True)
         os.makedirs(NovelFragmentsDir, exist_ok=True)
-        error = save_list_to_files(fragments, NovelFragmentsDir + "/", 0)
+        error = save_list_to_files(fragments, NovelFragmentsDir, 0)
         if error:
             return handle_error(500, "Failed to save", error)
     except Exception as e:
@@ -44,7 +45,8 @@ def save_combined_fragments():
 
 def get_novel_fragments():
     try:
-        shutil.rmtree(NovelFragmentsDir, ignore_errors=True)
+        if os.path.exists(NovelFragmentsDir):
+            shutil.rmtree(NovelFragmentsDir, ignore_errors=True)
         os.makedirs(NovelFragmentsDir, exist_ok=True)
         error = save_lines_to_files(NovelPath)
         if error:
@@ -72,14 +74,11 @@ def get_initial():
         if error:
             return handle_error(500, "Failed to read prompts", error)
 
-        files = os.listdir(ImageDir)
         files = read_files_from_directory(ImageDir)
         images = []
-        now = int(time.time())  
 
         for file in files:
             if not os.path.isdir(file):  
-                #image_path = os.path.join("/images", file) + f"?v={now}"
                 image_path = os.path.join("/images", file)
                 images.append(image_path)
 

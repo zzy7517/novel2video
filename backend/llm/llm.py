@@ -1,6 +1,3 @@
-import requests
-from typing import Tuple, Optional
-
 from backend.llm.sambanova import query_samba_nova
 from backend.llm.siliconflow import query_silicon_flow
 

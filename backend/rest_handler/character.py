@@ -1,8 +1,9 @@
 import os
 import json
 import logging
+import shutil
+
 from flask import Flask, request, jsonify
-from pathlib import Path
 
 from backend.llm.llm import query_llm
 from backend.util.constant import CharacterDir, PromptsDir
@@ -24,10 +25,8 @@ def get_new_characters():
     try:
         # Remove and recreate the character directory
         if os.path.exists(CharacterDir):
-            for file in os.listdir(CharacterDir):
-                os.remove(os.path.join(CharacterDir, file))
-        else:
-            os.makedirs(CharacterDir)
+            shutil.rmtree(CharacterDir)
+        os.makedirs(CharacterDir)
 
         # Read lines from the prompts directory
         lines = []

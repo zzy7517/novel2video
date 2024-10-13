@@ -3,8 +3,6 @@ from flask import Flask, jsonify, request
 import os
 import re
 import time
-import shutil
-from threading import Thread
 
 from backend.image.sd import generate_image
 from backend.util.constant import ImageDir, PromptsEnDir

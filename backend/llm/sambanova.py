@@ -1,7 +1,5 @@
 import logging
 import requests
-import json
-from typing import Tuple, Optional
 
 from backend.llm.keys import SAMBA_NOVA_API_KEY
 

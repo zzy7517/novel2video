@@ -1,4 +1,6 @@
 import json
+from pathlib import Path
+
 from flask import Flask, request, jsonify
 import os
 import shutil
@@ -109,7 +111,8 @@ def extract_scene_from_texts():
         return jsonify({"error": "Failed to read fragments"}), 500
 
     try:
-        shutil.rmtree(PromptsDir)
+        if os.path.exists(PromptsDir):
+            shutil.rmtree(PromptsDir)
         os.makedirs(PromptsDir)
     except Exception as e:
         return jsonify({"error": "Failed to manage directory"}), 500
@@ -123,7 +126,7 @@ def extract_scene_from_texts():
         t2i_prompts = [re_pattern.sub('', line) for line in lines if line.strip()]
         offset += len(t2i_prompts)
         try:
-            save_list_to_files(t2i_prompts, PromptsDir + "/", offset - len(t2i_prompts))
+            save_list_to_files(t2i_prompts, PromptsDir, offset - len(t2i_prompts))
         except Exception as e:
             return jsonify({"error": "save list to file failed"}), 500
 
@@ -139,7 +142,8 @@ def extract_scene_from_texts():
 
 def get_prompts_en():
     try:
-        shutil.rmtree(PromptsEnDir)
+        if os.path.exists(PromptsEnDir):
+            shutil.rmtree(PromptsEnDir)
         os.makedirs(PromptsEnDir)
     except Exception as e:
         return jsonify({"error": "Failed to manage directory"}), 500
@@ -150,8 +154,11 @@ def get_prompts_en():
         return jsonify({"error": "Failed to read fragments"}), 500
 
     try:
-        with open(os.path.join(CharacterDir, 'characters.txt'), 'r') as file:
-                character_map = json.load(file)
+        character_map = {}
+        p = os.path.join(CharacterDir, 'characters.txt')
+        if os.path.exists(p):
+            with open(p, 'r', encoding='utf8') as file:
+                    character_map = json.load(file)
 
         for i, line in enumerate(lines):
             for key, value in character_map.items():
@@ -168,7 +175,7 @@ def get_prompts_en():
         return jsonify({"error": "translate failed"}), 500
 
     try:
-        save_list_to_files(lines, PromptsEnDir + "/", 0)
+        save_list_to_files(lines, PromptsEnDir, 0)
     except Exception as e:
         return jsonify({"error": "Failed to save promptsEn"}), 500
 

@@ -1,9 +1,13 @@
+import logging
 import os
 import re
 import shutil
 from typing import List, Tuple
 
 def read_lines_from_directory(directory):
+    if not os.path.exists(directory):
+        logging.info(f"dir {directory} doesn't exist")
+        return None, None
     try:
         files = os.listdir(directory)
     except OSError as e:
@@ -49,6 +53,8 @@ def read_files_from_directory(dir_path: str) -> List[os.DirEntry]:
     :return: List of os.DirEntry objects sorted by numeric order.
     """
     # Regular expression to extract numbers from filenames
+    if not os.path.exists(dir_path):
+        return []
     number_re = re.compile(r'\d+')
     
     # List to store tuples of (os.DirEntry, number)
@@ -75,7 +81,7 @@ def read_files_from_directory(dir_path: str) -> List[os.DirEntry]:
 def save_list_to_files(input_list, path, offset):
     try:
         for i, line in enumerate(input_list):
-            file_path = f"{path}{i + offset}.txt"
+            file_path = os.path.join(path, f"{i + offset}.txt")
             with open(file_path, 'w') as file:
                 file.write(line)
     except Exception as e:
@@ -83,7 +89,8 @@ def save_list_to_files(input_list, path, offset):
     return None
 
 def remove_all(directory):
-    shutil.rmtree(directory, ignore_errors=True)
+    if os.path.exists(directory):
+        shutil.rmtree(directory, ignore_errors=True)
 
 def make_dir(directory):
     os.makedirs(directory, exist_ok=True)
