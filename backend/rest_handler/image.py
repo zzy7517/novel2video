@@ -49,6 +49,7 @@ def get_local_images():
             if matches:
                 key = matches.group(1)
                 abs_path = os.path.join("/images", file)
-                image_map[key] = f"{abs_path}?v={now}"
+                #image_map[key] = f"{abs_path}?v={now}"
+                image_map[key] = abs_path
 
     return jsonify(image_map), 200

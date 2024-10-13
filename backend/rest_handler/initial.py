@@ -79,7 +79,8 @@ def get_initial():
 
         for file in files:
             if not os.path.isdir(file):  
-                image_path = os.path.join("/images", file) + f"?v={now}"
+                #image_path = os.path.join("/images", file) + f"?v={now}"
+                image_path = os.path.join("/images", file)
                 images.append(image_path)
 
         data = {

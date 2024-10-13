@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import logging
@@ -10,13 +11,14 @@ from backend.rest_handler.video import generate_video, get_video
 from backend.tts.tts import generate_audio_files
 from backend.util.constant import ImageDir
 
-app = Flask(__name__,static_url_path='/images', static_folder="temp")
+app = Flask(__name__)
+#app = Flask(__name__,static_url_path='/images', static_folder="temp")
 
 CORS(app)
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     format='%(asctime)s - %(levelname)s - %(message)s [File: %(filename)s, Line: %(lineno)d]'
 )
 
@@ -50,7 +52,6 @@ def api_generate_image():
 @app.route('/api/novel/images', methods=['GET']) # 获取本地图片
 def api_get_local_images():
     return get_local_images()
-
 
 # 初始化
 @app.route('/api/novel/initial', methods=['GET']) # 初始化
@@ -103,6 +104,12 @@ def serve_videos(filename):
 
 @app.route('/images/<path:filename>')
 def serve_images(filename):
+    logging.info(f"Requested image: {filename}")
+    file_path = os.path.join(ImageDir, filename)
+    logging.debug(f"Full path: {file_path}")
+    if not os.path.exists(file_path):
+        logging.error(f"File not found: {file_path}")
+        return "File not found", 404
     return send_from_directory(ImageDir, filename)
 
 if __name__ == '__main__':

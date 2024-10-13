@@ -1,3 +1,4 @@
+import logging
 import requests
 import json
 import threading
@@ -52,6 +53,7 @@ def query_silicon_flow(input_text, sys_text, temperature):
     
     response_data = response.json()
     if 'choices' in response_data and len(response_data['choices']) > 0:
+        logging.debug(f"sfModel {sFModel}, response {response_data['choices'][0]['message']['content']}")
         return response_data['choices'][0]['message']['content']
     else:
         raise Exception("No choices found in response.")
