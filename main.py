@@ -4,7 +4,7 @@ from flask_cors import CORS
 import logging
 
 from backend.rest_handler.character import get_local_characters, get_new_characters, get_random_appearance, put_characters
-from backend.rest_handler.image import generate_images, get_local_images
+from backend.rest_handler.image import generate_images, get_local_images, generate_single_image
 from backend.rest_handler.init import get_initial, get_novel_fragments, load_novel, save_combined_fragments, save_novel
 from backend.rest_handler.prompt import extract_scene_from_texts, get_prompts_en, save_prompt_en, save_prompt_zh
 from backend.rest_handler.video import generate_video, get_video
@@ -47,9 +47,13 @@ def api_save_prompt_zh():
     return save_prompt_zh()
 
 # image
-@app.route('/api/novel/images', methods=['POST'])
+@app.route('/api/novel/images', methods=['POST']) # 一键生成
 def api_generate_image():
     return generate_images()
+
+@app.route('/api/novel/image', methods=['POST']) # 重新生成图片
+def api_get_local_image():
+    return generate_single_image()
 
 @app.route('/api/novel/images', methods=['GET']) # 获取本地图片
 def api_get_local_images():

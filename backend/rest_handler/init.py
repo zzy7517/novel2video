@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify
 import os
 import shutil
-import time
 
 from backend.util.constant import image_dir, novel_fragments_dir, NovelPath, prompts_dir, prompts_en_dir
 from backend.util.file import read_files_from_directory, read_lines_from_directory, save_list_to_files

@@ -94,7 +94,7 @@ export default function CharacterExtractor() {
                 textAlign: 'center',
                 marginBottom: '20px',
                 color: '#2c3e50'
-            }}>角色提取器</h1>
+            }}>生成中文prompts之后提取里面的角色，用于文生图时锁定人物</h1>
             <div style={{
                 display: 'flex',
                 justifyContent: 'center',

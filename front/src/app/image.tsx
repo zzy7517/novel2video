@@ -98,7 +98,7 @@ export default function AIImageGenerator() {
                 for (const [index, imageUrl] of Object.entries(imageMap)) {
                     const numericIndex = Number(index);
                     if (!isNaN(numericIndex)) {
-                        updatedImages[numericIndex] = `http://localhost:1198${imageUrl}`;
+                        updatedImages[numericIndex] = addCacheBuster(`http://localhost:1198${imageUrl}`);
                     }
                 }
                 setImages(updatedImages);
@@ -156,6 +156,36 @@ export default function AIImageGenerator() {
             console.error('Error saving fragments:', error);
         }
     };
+
+    const generateSingleImage = async (index:number) => {
+        try {
+            showToast('开始');
+            const updatedImages = [...images];
+            updatedImages[index] = "http://localhost:1198/images/placeholder.png";
+            const response = await fetch('http://localhost:1198/api/novel/image', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    index: index,
+                    content: images[index]
+                }),
+            });
+            if (!response.ok) {
+                throw new Error('Failed to regenerate image');
+            }
+            const data = await response.json();
+            const imageUrl = data.url;
+            updatedImages[index] = addCacheBuster(`http://localhost:1198${imageUrl}`);
+            setImages(updatedImages);
+            console.log(`successfully regenerate image for prompt ${index}.`);
+            showToast('成功');
+        } catch (error) {
+            console.error('Error saving attachment:', error);
+            showToast('失败');
+        }
+    }
 
     const savePromptEn = async (index: number) => {
         try {
@@ -249,9 +279,9 @@ export default function AIImageGenerator() {
                 <button onClick={extractChapterFragments}>分割章节</button>
                 {loaded && (
                     <>
-                        <button onClick={extractPrompts} className="extract-prompts-button">提取文生图prompts</button>
+                        <button onClick={extractPrompts} className="extract-prompts-button">提取中文prompts</button>
                         <button onClick={generatePromptsEn} className="generate-promptsEn" disabled={isLoading}>
-                            {isLoading ? 'Generating...' : 'Translate Prompts'}
+                            {isLoading ? 'Generating...' : '翻译成英文'}
                         </button>
                         <button onClick={generateAllImages} className="generate-all">一键生成</button>
                         <button onClick={initialize} className="refresh-images">刷新</button>
@@ -301,6 +331,7 @@ export default function AIImageGenerator() {
                                     className="scrollable"
                                 ></textarea>
                                 <button onClick={() => savePromptEn(index)}>保存</button>
+                                <button onClick={() => generateSingleImage(index)}>重新生成</button>
                             </div>
                             <div className="image-section">
                                 <Image
