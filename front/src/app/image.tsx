@@ -9,18 +9,25 @@ export default function AIImageGenerator() {
     const [prompts, setPrompts] = useState<string[]>([]);
     const [loaded, setLoaded] = useState<boolean>(false);
     const [promptsEn, setPromptsEn] = useState<string[]>([]);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isLoading] = useState<boolean>(false);
 
     useEffect(() => {
         initialize();
     }, []);
+
+    const addCacheBuster = (url: string) => {
+        const cacheBuster = `?v=${Date.now()}`
+        return url.includes('?') ? `${url}&${cacheBuster}` : `${url}${cacheBuster}`
+  }
 
     const initialize = () => {
         fetch('http://localhost:1198/api/novel/initial')
             .then(response => response.json())
             .then(data => {
                 setFragments(data.fragments || []);
-                const updatedImages = (data.images || []).map((imageUrl:string) => `http://localhost:1198${imageUrl}`);
+                const updatedImages = (data.images || []).map((imageUrl: string) =>
+                  addCacheBuster(`http://localhost:1198${imageUrl}`)
+                )
                 setImages(updatedImages);
                 setPrompts(data.prompts || []);
                 setPromptsEn(data.promptsEn || [])
@@ -183,7 +190,7 @@ export default function AIImageGenerator() {
             body: JSON.stringify({ fragments })
         })
             .then(response => response.json())
-            .then(data => {
+            .then(() => {
                 console.log('Audio generation initiated');
             })
             .catch(error => console.error('Error generating audio:', error));
@@ -231,7 +238,7 @@ export default function AIImageGenerator() {
                                     className="scrollable"
                                     readOnly
                                 ></textarea>
-                                <button onClick={() => generateImage(index)}>Generate Image</button>
+                                <button onClick={() => generateImage(index)}>重新生成</button>
                             </div>
                             <div className="attachment-section">
                                 <textarea
