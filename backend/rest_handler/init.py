@@ -15,12 +15,15 @@ def save_lines_to_files(file_name):
     try:
         with open(file_name, 'r', encoding='utf-8') as file:
             lines = file.readlines()
-            for i, line in enumerate(lines):
+            linesWithContent = []
+            for line in lines:
                 line = line.strip()
                 if line:
-                    file_path = os.path.join(NovelFragmentsDir, f"{i + 1}.txt")
-                    with open(file_path, 'w') as f:
-                        f.write(line)
+                    linesWithContent.append(line)
+            for i, line in enumerate(linesWithContent):
+                file_path = os.path.join(NovelFragmentsDir, f"{i}.txt")
+                with open(file_path, 'w') as f:
+                    f.write(line)
     except Exception as e:
         return e
     return None

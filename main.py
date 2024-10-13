@@ -6,7 +6,7 @@ import logging
 from backend.rest_handler.character import get_local_characters, get_new_characters, get_random_appearance, put_characters
 from backend.rest_handler.image import generate_images, get_local_images
 from backend.rest_handler.init import get_initial, get_novel_fragments, load_novel, save_combined_fragments, save_novel
-from backend.rest_handler.prompt import extract_scene_from_texts, get_prompts_en, save_prompt_en
+from backend.rest_handler.prompt import extract_scene_from_texts, get_prompts_en, save_prompt_en, save_prompt_zh
 from backend.rest_handler.video import generate_video, get_video
 from backend.tts.tts import generate_audio_files
 from backend.util.constant import ImageDir, NovelFragmentsDir, base_dir
@@ -41,6 +41,10 @@ def api_get_prompts_en():
 @app.route('/api/novel/prompt/en', methods=['POST']) # 保存英文提示词
 def api_save_prompt_en():
     return save_prompt_en()
+
+@app.route('/api/novel/prompt/zh', methods=['POST']) # 保存中文提示词
+def api_save_prompt_zh():
+    return save_prompt_zh()
 
 # image
 @app.route('/api/novel/images', methods=['POST'])

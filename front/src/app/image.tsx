@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from "next/image";
+import {showToast} from "@/app/toast";
+import {ToastContainer} from "react-toastify";
 
 export default function AIImageGenerator() {
     const [images, setImages] = useState<string[]>([]);
@@ -54,19 +56,21 @@ export default function AIImageGenerator() {
     };
 
     const extractPrompts = () => {
+        showToast('开始生成');
         fetch('http://localhost:1198/api/get/novel/prompts')
             .then(response => response.json())
             .then(data => {
-                setPrompts(data || []);
-            })
-            .catch(error => console.error('Error fetching prompts:', error));
-    };
-
-    const generateImage = (index: number) => {
-        console.log(`Generate image for fragment ${index + 1}`);
+            setPrompts(data || []);
+            console.log('Prompts fetched successfully');
+        })
+        .catch(error => {
+            console.error('Error fetching prompts:', error);
+            showToast('失败');
+        });
     };
 
     const generateAllImages = () => {
+        showToast('开始生成，请等待');
         fetch('http://localhost:1198/api/novel/images', {
             method: 'POST',
             headers: {
@@ -78,7 +82,10 @@ export default function AIImageGenerator() {
                 console.log('Images generation initiated');
                 refreshImages();
             })
-            .catch(error => console.error('Error generating all images:', error));
+            .catch(error => {
+                showToast('失败，请检查日志');
+                console.error('Error generating all images:', error)
+            });
     };
 
     type ImageMap = Record<string, string>;
@@ -167,21 +174,52 @@ export default function AIImageGenerator() {
                 throw new Error('Failed to save attachment');
             }
             console.log(`Attachment for fragment ${index + 1} saved successfully.`);
+            showToast('保存成功');
         } catch (error) {
             console.error('Error saving attachment:', error);
+            showToast('保存失败');
+        }
+    };
+
+    const savePromptZh = async  (index: number) => {
+        try {
+            const response = await fetch('http://localhost:1198/api/novel/prompt/zh', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    index: index,
+                    content: prompts[index]
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to save attachment');
+            }
+            console.log(`Attachment for fragment ${index + 1} saved successfully.`);
+            showToast('保存成功');
+        } catch (error) {
+            console.error('Error saving attachment:', error);
+            showToast('保存失败');
         }
     };
 
     const generatePromptsEn = () => {
+        showToast('开始生成，请等待');
         fetch('http://localhost:1198/api/novel/prompts/en')
-            .then(response => response.json())
-            .then(data => {
-                setPromptsEn(data);
-            })
-            .catch(error => console.error('Error fetching prompts:', error));
+        .then(response => response.json())
+        .then(data => {
+            setPromptsEn(data || []);
+        })
+        .catch(error => {
+            showToast('失败');
+            console.error('Error fetching prompts:', error)
+        });
     };
 
     const generateAudio = () => {
+        showToast('开始生成，请等待');
         fetch('http://localhost:1198/api/novel/audio', {
             method: 'POST',
             headers: {
@@ -193,7 +231,10 @@ export default function AIImageGenerator() {
             .then(() => {
                 console.log('Audio generation initiated');
             })
-            .catch(error => console.error('Error generating audio:', error));
+            .catch(error => {
+                console.error('Error generating audio:', error);
+                showToast('失败');
+            });
     };
 
     return (
@@ -230,19 +271,23 @@ export default function AIImageGenerator() {
                                     )}
                                 </div>
                             </div>
-                            <div className="description-section">
+                            <div className="prompt-section">
                                 <textarea
                                     value={prompts[index] || ''}
                                     placeholder="prompt"
+                                    onChange={(e) => {
+                                        const newAttachments = [...prompts];
+                                        newAttachments[index] = e.target.value;
+                                        setPrompts(newAttachments);
+                                    }}
                                     rows={4}
                                     className="scrollable"
-                                    readOnly
                                 ></textarea>
-                                <button onClick={() => generateImage(index)}>重新生成</button>
+                                <button onClick={() => savePromptZh(index)}>保存</button>
                             </div>
-                            <div className="attachment-section">
+                            <div className="promptEn-section">
                                 <textarea
-                                    value={promptsEn[index]}
+                                    value={promptsEn[index] || ''}
                                     onChange={(e) => {
                                         const newAttachments = [...promptsEn];
                                         newAttachments[index] = e.target.value;
@@ -252,7 +297,7 @@ export default function AIImageGenerator() {
                                     rows={4}
                                     className="scrollable"
                                 ></textarea>
-                                <button onClick={() => savePromptEn(index)}>Save Attachment</button>
+                                <button onClick={() => savePromptEn(index)}>保存</button>
                             </div>
                             <div className="image-section">
                                 <Image
@@ -263,6 +308,7 @@ export default function AIImageGenerator() {
                                     height={200}
                                 />
                             </div>
+                            <ToastContainer />
                         </div>
                     ))}
                 </>
@@ -293,7 +339,7 @@ export default function AIImageGenerator() {
                     padding: 20px;
                     margin-bottom: 20px;
                 }
-                .input-section, .description-section, .attachment-section, .image-section {
+                .input-section, .prompt-section, .promptEn-section, .image-section {
                     width: 23%;
                 }
                 textarea {

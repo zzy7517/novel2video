@@ -196,3 +196,18 @@ def save_prompt_en():
         return jsonify({"error": "Failed to write file"}), 500
 
     return jsonify({"message": "Attachment saved successfully"}), 200
+
+def save_prompt_zh():
+    req = request.get_json()
+    if not req or 'index' not in req or 'content' not in req:
+        return jsonify({"error": "parse request body failed"}), 400
+
+    file_path = os.path.join(PromptsDir, f"{req['index']}.txt")
+    try:
+        os.makedirs(PromptsDir, exist_ok=True)
+        with open(file_path, 'w') as file:
+            file.write(req['content'])
+    except Exception as e:
+        return jsonify({"error": "Failed to write file"}), 500
+
+    return jsonify({"message": "Attachment saved successfully"}), 200
