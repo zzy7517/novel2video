@@ -5,7 +5,7 @@ import re
 import time
 
 from backend.image.sd import generate_image
-from backend.util.constant import ImageDir, PromptsEnDir
+from backend.util.constant import image_dir, prompts_en_dir
 from backend.util.file import make_dir, read_lines_from_directory, remove_all
 
 def handle_error(message, err):
@@ -20,12 +20,12 @@ async def async_generate_images(lines):
                 
 def generate_images():
     try:
-        remove_all(ImageDir)
-        make_dir(ImageDir)
+        remove_all(image_dir)
+        make_dir(image_dir)
     except Exception as e:
         return handle_error("Failed to manage directory", e)
     try:
-        lines, err = read_lines_from_directory(PromptsEnDir)
+        lines, err = read_lines_from_directory(prompts_en_dir)
         if err:
             return handle_error("Failed to read fragments", err)
         asyncio.run(async_generate_images(lines))
@@ -35,7 +35,7 @@ def generate_images():
 
 def get_local_images():
     try:
-        files = os.listdir(ImageDir)
+        files = os.listdir(image_dir)
     except Exception as e:
         return jsonify({"error": "Failed to read image directory"}), 500
 

@@ -9,7 +9,7 @@ from backend.rest_handler.init import get_initial, get_novel_fragments, load_nov
 from backend.rest_handler.prompt import extract_scene_from_texts, get_prompts_en, save_prompt_en, save_prompt_zh
 from backend.rest_handler.video import generate_video, get_video
 from backend.tts.tts import generate_audio_files
-from backend.util.constant import ImageDir, NovelFragmentsDir, base_dir
+from backend.util.constant import image_dir, novel_fragments_dir, base_dir, video_dir
 
 app = Flask(__name__)
 CORS(app)
@@ -102,17 +102,17 @@ def api_generate_video():
 
 @app.route('/videos/<path:filename>')
 def serve_videos(filename):
-    return send_from_directory('temp/videos', filename)
+    return send_from_directory(video_dir, filename)
 
 @app.route('/images/<path:filename>')
 def serve_images(filename):
     logging.info(f"Requested image: {filename}")
-    file_path = os.path.join(ImageDir, filename)
+    file_path = os.path.join(image_dir, filename)
     logging.debug(f"Full path: {file_path}")
     if not os.path.exists(file_path):
         logging.error(f"File not found: {file_path}")
         return "File not found", 404
-    return send_from_directory(ImageDir, filename)
+    return send_from_directory(image_dir, filename)
 
 if __name__ == '__main__':
     logging.info(f"Current working directory:{os.getcwd()}")

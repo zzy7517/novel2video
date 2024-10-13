@@ -8,30 +8,30 @@ export default function VideoGenerator() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const fetchInitialVideo = async () => {
-      try {
-        const response = await fetch('http://localhost:1198/api/novel/video', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch initial video')
-        }
-
-        const data = await response.json()
-        if (data.videoUrl) {
-          setVideoUrl('http://localhost:1198${data.videoUrl}')
-        }
-      } catch (err) {
-        console.error('Error fetching initial video:', err)
-      }
-    }
-
     fetchInitialVideo()
   }, [])
+
+  const fetchInitialVideo = async () => {
+    try {
+      const response = await fetch('http://localhost:1198/api/novel/video', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch initial video')
+      }
+
+      const data = await response.json()
+      if (data.videoUrl) {
+        setVideoUrl(`http://localhost:1198${data.videoUrl}`)
+      }
+    } catch (err) {
+      console.error('Error fetching initial video:', err)
+    }
+  }
 
   const generateVideo = async () => {
     setIsLoading(true)

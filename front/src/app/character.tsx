@@ -1,6 +1,8 @@
 'use client'
 
 import React, {useEffect, useState} from 'react'
+import {showToast} from "@/app/toast";
+import {ToastContainer} from "react-toastify";
 
 export default function CharacterExtractor() {
     const [roles, setRoles] = useState<Record<string, string>>({})
@@ -19,6 +21,10 @@ export default function CharacterExtractor() {
                 : 'http://localhost:1198/api/novel/characters'
             const response = await fetch(endpoint)
             const data = await response.json()
+            if (response.status == 40401) {
+                showToast("本地没有角色");
+                return
+            }
             setRoles(data)
             setEditedDescriptions({})
         } catch (error) {
@@ -193,6 +199,7 @@ export default function CharacterExtractor() {
                     {isLoading ? '保存中...' : '保存修改'}
                 </button>
             )}
+            <ToastContainer />
         </div>
     )
 }

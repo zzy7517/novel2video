@@ -6,7 +6,7 @@ import shutil
 from flask import Flask, request, jsonify
 
 from backend.llm.llm import query_llm
-from backend.util.constant import CharacterDir, PromptsDir
+from backend.util.constant import character_dir, prompts_dir
 
 extract_character_sys = """
 	#Task: #
@@ -24,14 +24,14 @@ extract_character_sys = """
 def get_new_characters():
     try:
         # Remove and recreate the character directory
-        if os.path.exists(CharacterDir):
-            shutil.rmtree(CharacterDir)
-        os.makedirs(CharacterDir)
+        if os.path.exists(character_dir):
+            shutil.rmtree(character_dir)
+        os.makedirs(character_dir)
 
         # Read lines from the prompts directory
         lines = []
-        for file_name in os.listdir(PromptsDir):
-            with open(os.path.join(PromptsDir, file_name), 'r') as file:
+        for file_name in os.listdir(prompts_dir):
+            with open(os.path.join(prompts_dir, file_name), 'r') as file:
                 lines.extend(file.readlines())
 
         # Process lines in chunks
@@ -44,7 +44,7 @@ def get_new_characters():
                 character_map[character.strip()] = character.strip()
 
         # Save characters to a file
-        with open(os.path.join(CharacterDir, 'characters.txt'), 'w') as file:
+        with open(os.path.join(character_dir, 'characters.txt'), 'w') as file:
             json.dump(character_map, file)
 
         return jsonify(character_map), 200
@@ -56,7 +56,9 @@ def get_new_characters():
 
 def get_local_characters():
     try:
-        with open(os.path.join(CharacterDir, 'characters.txt'), 'r') as file:
+        if not os.path.exists(character_dir):
+            return jsonify({"error":"no local characters"}), 40401
+        with open(os.path.join(character_dir, 'characters.txt'), 'r') as file:
             character_map = json.load(file)
         return jsonify(character_map), 200
     except Exception as e:
@@ -69,12 +71,12 @@ def put_characters():
         if not descriptions:
             return jsonify({"error": "Invalid JSON"}), 400
 
-        with open(os.path.join(CharacterDir, 'characters.txt'), 'r') as file:
+        with open(os.path.join(character_dir, 'characters.txt'), 'r') as file:
             character_map = json.load(file)
 
         character_map.update(descriptions)
         # Save descriptions to a file
-        with open(os.path.join(CharacterDir, 'characters.txt'), 'w') as file:
+        with open(os.path.join(character_dir, 'characters.txt'), 'w') as file:
             json.dump(character_map, file)
 
         return jsonify({"message": "Descriptions updated successfully"}), 200

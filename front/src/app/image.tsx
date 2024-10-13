@@ -205,18 +205,21 @@ export default function AIImageGenerator() {
         }
     };
 
-    const generatePromptsEn = () => {
-        showToast('开始生成，请等待');
-        fetch('http://localhost:1198/api/novel/prompts/en')
-        .then(response => response.json())
-        .then(data => {
+    const generatePromptsEn = async () => {
+        try {
+            showToast('开始生成，请等待');
+            const response = await fetch('http://localhost:1198/api/novel/prompts/en');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
             setPromptsEn(data || []);
-        })
-        .catch(error => {
+        } catch (error) {
             showToast('失败');
-            console.error('Error fetching prompts:', error)
-        });
+            console.error('Error fetching prompts:', error);
+        }
     };
+
 
     const generateAudio = () => {
         showToast('开始生成，请等待');
@@ -308,7 +311,6 @@ export default function AIImageGenerator() {
                                     height={200}
                                 />
                             </div>
-                            <ToastContainer />
                         </div>
                     ))}
                 </>
@@ -383,6 +385,7 @@ export default function AIImageGenerator() {
                     font-size: 16px;
                 }
             `}</style>
+            <ToastContainer />
         </div>
     );
 }
