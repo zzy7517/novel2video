@@ -94,3 +94,8 @@ def remove_all(directory):
 
 def make_dir(directory):
     os.makedirs(directory, exist_ok=True)
+
+def read_file(path):
+    with open(path, 'r', encoding='utf-8') as file:
+        content = file.read()
+        return content

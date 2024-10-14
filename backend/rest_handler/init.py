@@ -2,8 +2,9 @@ from flask import Flask, request, jsonify
 import os
 import shutil
 
-from backend.util.constant import image_dir, novel_fragments_dir, NovelPath, prompts_dir, prompts_en_dir
-from backend.util.file import read_files_from_directory, read_lines_from_directory, save_list_to_files
+from backend.util.constant import image_dir, novel_fragments_dir, novel_path, prompts_dir, prompts_en_dir, prompt_path
+from backend.util.file import read_files_from_directory, read_lines_from_directory, save_list_to_files, read_file
+
 
 def handle_error(status_code, message, error):
     response = jsonify({'error': message, 'details': str(error)})
@@ -50,7 +51,7 @@ def get_novel_fragments():
         if os.path.exists(novel_fragments_dir):
             shutil.rmtree(novel_fragments_dir, ignore_errors=True)
         os.makedirs(novel_fragments_dir, exist_ok=True)
-        error = save_lines_to_files(NovelPath)
+        error = save_lines_to_files(novel_path)
         if error:
             return handle_error(500, "Failed to process file", error)
 
@@ -98,8 +99,7 @@ def get_initial():
 
 def load_novel():
     try:
-        with open(NovelPath, 'r', encoding='utf-8') as file:
-            content = file.read()
+        content = read_file(novel_path)
         return jsonify({'content': content}), 200
     except FileNotFoundError:
         return jsonify({'content': ''}), 200  
@@ -111,7 +111,28 @@ def save_novel():
         data = request.get_json()
         content = data.get('content', '')
 
-        with open(NovelPath, 'w', encoding='utf-8') as file:
+        with open(novel_path, 'w', encoding='utf-8') as file:
+            file.write(content)
+
+        return jsonify({'message': '保存成功！'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+def load_prompt():
+    try:
+        content = read_file(prompt_path)
+        return jsonify({'content': content}), 200
+    except FileNotFoundError:
+        return jsonify({'content': ''}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+def save_prompt():
+    try:
+        data = request.get_json()
+        content = data.get('content', '')
+
+        with open(prompt_path, 'w', encoding='utf-8') as file:
             file.write(content)
 
         return jsonify({'message': '保存成功！'}), 200

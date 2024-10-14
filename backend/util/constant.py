@@ -10,4 +10,5 @@ prompts_dir = os.path.join(base_dir, "prompts")
 prompts_en_dir = os.path.join(base_dir, "promptsEn")
 audio_dir = os.path.join(base_dir, "audio")
 video_dir = os.path.join(base_dir, "video")
-NovelPath = "novel.txt"
+novel_path = "novel.txt"
+prompt_path = "prompt.txt"
