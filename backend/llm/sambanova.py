@@ -2,28 +2,28 @@ import logging
 import requests
 
 from backend.llm.keys import SAMBA_NOVA_API_KEY
+from backend.util.file import get_config
 
 LLAMA_405B = "Meta-Llama-3.1-405B-Instruct"
 
 def query_samba_nova(input_text: str, sys: str, model_name: str, temperature: float) -> str:
-    url = "https://api.sambanova.ai/v1/chat/completions"
-    messages = []
-    if sys:
-        messages.append({"role": "system", "content": sys})
-    messages.append({"role": "user", "content": input_text})
-
-    request_body = {
-        "temperature": temperature,
-        "messages": messages,
-        "model": LLAMA_405B,  # Assuming model_name is passed correctly
-    }
-
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {SAMBA_NOVA_API_KEY}",
-    }
-
     try:
+        url = "https://api.sambanova.ai/v1/chat/completions"
+        messages = []
+        if sys:
+            messages.append({"role": "system", "content": sys})
+        messages.append({"role": "user", "content": input_text})
+
+        request_body = {
+            "temperature": temperature,
+            "messages": messages,
+            "model": LLAMA_405B,  # Assuming model_name is passed correctly
+        }
+        key = get_config()['address1']
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {key}",
+        }
         response = requests.post(url, headers=headers, json=request_body)
         response.raise_for_status()  # Raises an HTTPError for bad responses
 

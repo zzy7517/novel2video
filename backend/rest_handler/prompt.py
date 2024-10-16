@@ -93,7 +93,7 @@ def get_prompts_en():
         for i, line in enumerate(lines):
             for key, value in character_map.items():
                 if key in line:
-                    lines[i] = line.replace(key, value)
+                    lines[i] = lines[i].replace(key, value)
     except Exception as e:
         logging.error(f"translate prompts failed, err {e}")
         return jsonify({"error": "translate failed"}), 500

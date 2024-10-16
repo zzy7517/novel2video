@@ -10,6 +10,7 @@ export default function CharacterExtractor() {
     const [isLoading, setIsLoading] = useState(false)
 
     useEffect(() => {
+        showToast("提取本地角色");
         extractRoles(true);
     }, []);
 
@@ -28,6 +29,7 @@ export default function CharacterExtractor() {
             setRoles(data)
             setEditedDescriptions({})
         } catch (error) {
+            showToast("失败");
             console.error('Failed to extract roles:', error)
         } finally {
             setIsLoading(false)
@@ -49,7 +51,9 @@ export default function CharacterExtractor() {
                 ...prev,
                 [roleName]: randomDescription
             }))
+            showToast("成功");
         } catch (error) {
+            showToast("失败");
             console.error('Failed to generate random description:', error)
         }
     }
@@ -73,7 +77,9 @@ export default function CharacterExtractor() {
                 })
                 return newRoles
             })
+            showToast("成功");
         } catch (error) {
+            showToast("失败");
             console.error('Failed to save changes:', error)
         } finally {
             setIsLoading(false)

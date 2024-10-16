@@ -12,3 +12,4 @@ audio_dir = os.path.join(base_dir, "audio")
 video_dir = os.path.join(base_dir, "video")
 novel_path = "novel.txt"
 prompt_path = "prompt.txt"
+config_path = "config.json"

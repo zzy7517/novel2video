@@ -5,13 +5,17 @@ import AIImageGenerator from "./image";
 import TextEditor from "@/app/text";
 import CharacterExtractor from "@/app/character";
 import VideoGenerator from "./video";
+import Models from "@/app/init";
 
 export default function Home() {
-    const [activeTab, setActiveTab] = useState("text");
+    const [activeTab, setActiveTab] = useState("models");
 
     return (
         <div style={styles.container}>
             <div style={styles.sidebar}>
+                <div style={styles.item} onClick={() => setActiveTab("models")}>
+                    初始化模型
+                </div>
                 <div style={styles.item} onClick={() => setActiveTab("text")}>
                     保存文本
                 </div>
@@ -30,6 +34,7 @@ export default function Home() {
                 {activeTab === "character" && <CharacterExtractor/>}
                 {activeTab === "image" && <AIImageGenerator/>}
                 {activeTab === "video" && <VideoGenerator/>}
+                {activeTab === "models" && <Models/>}
             </div>
         </div>
     );

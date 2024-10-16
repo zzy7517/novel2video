@@ -159,7 +159,6 @@ export default function AIImageGenerator() {
 
     const generateSingleImage = async (index:number) => {
         try {
-            showToast('开始');
             const updatedImages = [...images];
             updatedImages[index] = "http://localhost:1198/images/placeholder.png";
             const response = await fetch('http://localhost:1198/api/novel/image', {

@@ -3,6 +3,7 @@ import requests
 import threading
 
 from backend.llm.keys import SILICON_FLOW_API_KEY
+from backend.util.file import get_config
 
 # List of models
 silicon_flow_free_models = [
@@ -27,6 +28,7 @@ def get_next_model():
 
 def query_silicon_flow(input_text, sys_text, temperature):
     url = "https://api.siliconflow.cn/v1/chat/completions"
+    key = get_config()['address2']
     messages = []
     if sys_text:
         messages.append({"role": "system", "content": sys_text})
@@ -42,7 +44,7 @@ def query_silicon_flow(input_text, sys_text, temperature):
     headers = {
         "Accept": "application/json",
         "Content-Type": "application/json",
-        "Authorization": f"Bearer {SILICON_FLOW_API_KEY}",
+        "Authorization": f"Bearer {key}",
     }
     
     response = requests.post(url, headers=headers, json=request_body)

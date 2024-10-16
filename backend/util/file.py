@@ -1,8 +1,12 @@
+import json
 import logging
 import os
 import re
 import shutil
 from typing import List, Tuple
+
+from backend.util.constant import config_path
+
 
 def read_lines_from_directory(directory):
     if not os.path.exists(directory):
@@ -99,3 +103,13 @@ def read_file(path):
     with open(path, 'r', encoding='utf-8') as file:
         content = file.read()
         return content
+
+def get_config():
+    if not os.path.exists(config_path) or os.path.getsize(config_path) == 0:
+        with open(config_path, 'w', encoding='utf-8') as file:
+            json.dump({'address1': '', 'address2': '', 'address3': ''}, file)
+    try:
+        with open(config_path, 'r', encoding='utf-8') as file:
+            return json.load(file)
+    except Exception as e:
+        raise

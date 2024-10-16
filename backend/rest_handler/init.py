@@ -1,8 +1,12 @@
+import json
+import logging
+
 from flask import Flask, request, jsonify
 import os
 import shutil
 
-from backend.util.constant import image_dir, novel_fragments_dir, novel_path, prompts_dir, prompts_en_dir, prompt_path
+from backend.util.constant import image_dir, novel_fragments_dir, novel_path, prompts_dir, prompts_en_dir, prompt_path, \
+    config_path
 from backend.util.file import read_files_from_directory, read_lines_from_directory, save_list_to_files, read_file
 
 
@@ -138,3 +142,38 @@ def save_prompt():
         return jsonify({'message': '保存成功！'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+file_paths = {
+    'address1': 'samba_nova_key.txt',
+    'address2': 'silicon_flow_key.txt',
+    'address3': 'stable_diffusion_address.txt',
+}
+def get_model_config():
+    if not os.path.exists(config_path) or os.path.getsize(config_path) == 0:
+        with open(config_path, 'w', encoding='utf-8') as file:
+            json.dump({'address1': '', 'address2': '', 'address3': ''}, file)
+    try:
+        with open(config_path, 'r', encoding='utf-8') as file:
+            data = json.load(file)
+            logging.info(data['address1'])
+        return jsonify(data)
+    except Exception as e:
+        logging.error(f'Error reading addresses: {e}')
+        return 'Error reading addresses', 500
+
+def save_model_config():
+    try:
+        data = request.json
+        key = data.get('key')
+        value = data.get('value')
+        if key not in ['address1', 'address2', 'address3']:
+            return 'Invalid address key', 400
+        with open(config_path, 'r', encoding='utf-8') as file:
+            addresses = json.load(file)
+        addresses[key] = value
+        with open(config_path, 'w', encoding='utf-8') as file:
+            json.dump(addresses, file)
+        return 'Address saved successfully', 200
+    except Exception as e:
+        logging.error(f'Error saving {key}: {e}')
+        return f'Error saving {key}', 500
