@@ -166,7 +166,7 @@ def save_model_config():
         data = request.json
         key = data.get('key')
         value = data.get('value')
-        if key not in ['address1', 'address2', 'address3']:
+        if key not in ['address1', 'address2', 'address3', 'address3Type']:
             return 'Invalid address key', 400
         with open(config_path, 'r', encoding='utf-8') as file:
             addresses = json.load(file)
