@@ -8,11 +8,13 @@ export default function Component() {
   const [address1, setAddress1] = useState('')
   const [address2, setAddress2] = useState('')
   const [address3, setAddress3] = useState('')
-  const [address3Type, setAddress3Type] = useState('stable-diffusion')
+  const [address3Type, setAddress3Type] = useState('stable_diffusion_web_ui')
+  const [comfyuiNodeApi, setComfyuiNodeApi] = useState('')
   const [savingStates, setSavingStates] = useState({
     address1: false,
     address2: false,
-    address3: false
+    address3: false,
+    comfyuiNodeApi: false
   })
 
   useEffect(() => {
@@ -28,7 +30,8 @@ export default function Component() {
         setAddress1(data.address1 || '')
         setAddress2(data.address2 || '')
         setAddress3(data.address3 || '')
-        setAddress3Type(data.address3Type || 'stable-diffusion')
+        setAddress3Type(data.address3Type || 'stable_diffusion_web_ui')
+        setComfyuiNodeApi(data.comfyuiNodeApi || '')
       } else {
         showToast(`读取本地配置出错`)
         console.error('Failed to fetch addresses')
@@ -39,7 +42,7 @@ export default function Component() {
     }
   }
 
-  const saveAddress = async (key: 'address1' | 'address2' | 'address3', value: string) => {
+  const saveAddress = async (key: 'address1' | 'address2' | 'address3' | 'comfyuiNodeApi', value: string) => {
     setSavingStates(prev => ({ ...prev, [key]: true }))
     try {
       const response = await fetch('http://localhost:1198/api/model/config', {
@@ -161,7 +164,7 @@ export default function Component() {
               type="text"
               value={address3}
               onChange={(e) => setAddress3(e.target.value)}
-              placeholder={address3Type === 'stable-diffusion' ? 'Stable Diffusion Web Ui 地址' : 'ComfyUI 地址'}
+              placeholder={address3Type === 'stable_diffusion_web_ui' ? 'Stable Diffusion Web Ui 地址' : 'ComfyUI 地址'}
               className="flex-grow px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500"
             />
             <button
@@ -172,7 +175,31 @@ export default function Component() {
               {savingStates.address3 ? '保存中...' : '保存'}
             </button>
           </div>
-          <p className="text-sm text-gray-600">可以是本地的，也可以是云端的</p>
+          {address3Type === 'comfyui' && (
+            <div className="mt-2">
+              <label htmlFor="comfyuiNodeApi" className="block text-sm font-medium text-gray-800">
+                ComfyUI API
+              </label>
+              <div className="flex space-x-2">
+                <input
+                  id="comfyuiNodeApi"
+                  type="text"
+                  value={comfyuiNodeApi}
+                  onChange={(e) => setComfyuiNodeApi(e.target.value)}
+                  placeholder="ComfyUI API"
+                  className="flex-grow px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500"
+                />
+                <button
+                  onClick={() => saveAddress('comfyuiNodeApi', comfyuiNodeApi)}
+                  disabled={savingStates.comfyuiNodeApi}
+                  className="px-4 py-2 bg-black text-white rounded-md shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {savingStates.comfyuiNodeApi ? '保存中...' : '保存'}
+                </button>
+              </div>
+            </div>
+          )}
+          <p className="text-sm text-gray-600">地址可以是本地的，也可以是云端的，如果使用你自己的comfyuiapi，需要在节点里填prompt的地方加上占位符$prompt$，</p>
         </div>
       </div>
       <ToastContainer />
