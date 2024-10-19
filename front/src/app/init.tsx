@@ -1,13 +1,14 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import {showToast} from "@/app/toast";
-import {ToastContainer} from "react-toastify";
+import { showToast } from "@/app/toast"
+import { ToastContainer } from "react-toastify"
 
 export default function Component() {
   const [address1, setAddress1] = useState('')
   const [address2, setAddress2] = useState('')
   const [address3, setAddress3] = useState('')
+  const [address3Type, setAddress3Type] = useState('stable-diffusion')
   const [savingStates, setSavingStates] = useState({
     address1: false,
     address2: false,
@@ -27,6 +28,7 @@ export default function Component() {
         setAddress1(data.address1 || '')
         setAddress2(data.address2 || '')
         setAddress3(data.address3 || '')
+        setAddress3Type(data.address3Type || 'stable-diffusion')
       } else {
         showToast(`读取本地配置出错`)
         console.error('Failed to fetch addresses')
@@ -58,6 +60,28 @@ export default function Component() {
       showToast(`保存 ${key} 时出错 ${error}`)
     } finally {
       setSavingStates(prev => ({ ...prev, [key]: false }))
+    }
+  }
+
+  const saveAddress3Type = async (value: string) => {
+    try {
+      const response = await fetch('http://localhost:1198/api/model/config', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ key: 'address3Type', value }),
+      })
+
+      if (response.ok) {
+        showToast(`保存成功`)
+        setAddress3Type(value)
+      } else {
+        showToast(`保存出错`)
+      }
+    } catch (error) {
+      console.error(`Error saving address type:`, error)
+      showToast(`保存出错 ${error}`)
     }
   }
 
@@ -114,8 +138,22 @@ export default function Component() {
             https://cloud.siliconflow.cn/account/ak，可以使用免费的小模型进行翻译 (需要实名认证）</p>
         </div>
         <div className="space-y-2">
+          <label htmlFor="address3Type" className="block text-sm font-medium text-gray-800">
+            文生图工具
+          </label>
+          <div className="flex space-x-2 mb-2">
+            <select
+              id="address3Type"
+              value={address3Type}
+              onChange={(e) => saveAddress3Type(e.target.value)}
+              className="flex-grow px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+            >
+              <option value="stable_diffusion_web_ui">Stable Diffusion Web Ui</option>
+              <option value="comfyui">ComfyUI</option>
+            </select>
+          </div>
           <label htmlFor="address3" className="block text-sm font-medium text-gray-800">
-            stable diffusion 地址
+            图像生成模型地址
           </label>
           <div className="flex space-x-2">
             <input
@@ -123,7 +161,7 @@ export default function Component() {
               type="text"
               value={address3}
               onChange={(e) => setAddress3(e.target.value)}
-              placeholder="sd address"
+              placeholder={address3Type === 'stable-diffusion' ? 'Stable Diffusion Web Ui 地址' : 'ComfyUI 地址'}
               className="flex-grow px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500"
             />
             <button
