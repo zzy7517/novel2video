@@ -1,10 +1,12 @@
 import asyncio
+import logging
+
 from flask import Flask, jsonify, request
 import os
 import re
 import time
 
-from backend.image.sd import generate_image
+from backend.image.image import generate_image, generate_images_single
 from backend.util.constant import image_dir, prompts_en_dir
 from backend.util.file import make_dir, read_lines_from_directory, remove_all
 
@@ -12,17 +14,19 @@ def handle_error(message, err):
     return jsonify({"error": message}), 500
 
 async def async_generate_images(lines):
-    for i, p in enumerate(lines):
-        try:
-            await generate_image(p, 114514191981, 540, 960, i)
-        except Exception as e:
-            print("Error:", e)
+    try:
+        await generate_image(lines)
+    except Exception as e:
+        logging.error(e)
+        raise e
+
 
 async def async_generate_image_single(content, index):
     try:
-        await generate_image(content, 114514191981, 540, 960, index)
+        await generate_images_single(content, index,)
     except Exception as e:
-        print("Error:", e)
+        logging.error(e)
+        raise
                 
 def generate_images():
     try:

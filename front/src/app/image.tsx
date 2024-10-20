@@ -168,7 +168,7 @@ export default function AIImageGenerator() {
                 },
                 body: JSON.stringify({
                     index: index,
-                    content: images[index]
+                    content: promptsEn[index]
                 }),
             });
             if (!response.ok) {

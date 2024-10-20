@@ -156,7 +156,7 @@ export default function Component() {
             </select>
           </div>
           <label htmlFor="address3" className="block text-sm font-medium text-gray-800">
-            图像生成模型地址
+            地址
           </label>
           <div className="flex space-x-2">
             <input
@@ -180,19 +180,18 @@ export default function Component() {
               <label htmlFor="comfyuiNodeApi" className="block text-sm font-medium text-gray-800">
                 ComfyUI API
               </label>
-              <div className="flex space-x-2">
-                <input
-                  id="comfyuiNodeApi"
-                  type="text"
-                  value={comfyuiNodeApi}
-                  onChange={(e) => setComfyuiNodeApi(e.target.value)}
-                  placeholder="ComfyUI API"
-                  className="flex-grow px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500"
+              <div className="flex flex-col space-y-2">
+                <textarea
+                    id="comfyuiNodeApi"
+                    value={comfyuiNodeApi}
+                    onChange={(e) => setComfyuiNodeApi(e.target.value)}
+                    placeholder="在此粘贴 ComfyUI API JSON..."
+                    className="w-full h-40 px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-500 font-mono whitespace-pre resize-none"
                 />
                 <button
-                  onClick={() => saveAddress('comfyuiNodeApi', comfyuiNodeApi)}
-                  disabled={savingStates.comfyuiNodeApi}
-                  className="px-4 py-2 bg-black text-white rounded-md shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={() => saveAddress('comfyuiNodeApi', comfyuiNodeApi)}
+                    disabled={savingStates.comfyuiNodeApi}
+                    className="px-4 py-2 bg-black text-white rounded-md shadow-sm hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {savingStates.comfyuiNodeApi ? '保存中...' : '保存'}
                 </button>
@@ -202,7 +201,7 @@ export default function Component() {
           <p className="text-sm text-gray-600">地址可以是本地的，也可以是云端的，如果使用你自己的comfyuiapi，需要在节点里填prompt的地方加上占位符$prompt$，</p>
         </div>
       </div>
-      <ToastContainer />
+      <ToastContainer/>
     </div>
   )
 }

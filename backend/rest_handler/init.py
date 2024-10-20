@@ -161,6 +161,7 @@ def get_model_config():
         logging.error(f'Error reading addresses: {e}')
         return 'Error reading addresses', 500
 
+
 def save_model_config():
     try:
         data = request.json
@@ -170,9 +171,14 @@ def save_model_config():
             return 'Invalid address key', 400
         with open(config_path, 'r', encoding='utf-8') as file:
             addresses = json.load(file)
+        if isinstance(value, str):
+            try:
+                value = json.loads(value)
+            except json.JSONDecodeError:
+                pass  # If it's not a JSON string, keep it as is
         addresses[key] = value
         with open(config_path, 'w', encoding='utf-8') as file:
-            json.dump(addresses, file)
+            json.dump(addresses, file, ensure_ascii=False, indent=4)
         return 'Address saved successfully', 200
     except Exception as e:
         logging.error(f'Error saving {key}: {e}')

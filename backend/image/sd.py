@@ -1,5 +1,7 @@
 import json
 import logging
+import os
+
 import requests
 import base64
 
@@ -20,6 +22,12 @@ async def generate_image(prompt: str, seed: int, width: int, height: int, order)
             "override_settings": {
                 "sd_vae": "Automatic",
             },
+            # "scheduler": "Simple",
+            # "forge_additional_modules": [
+            #     "E:\\sd\\FORGE-V2-\\forge\\models\\VAE\\ae.safetensors",
+            #     "E:\\sd\\FORGE-V2-\\forge\\models\\VAE\\clip_l.safetensors",
+            #     "E:\\sd\\FORGE-V2-\\forge\\models\\VAE\\t5xxl_fp16.safetensors",
+            # ]
             # "enable_hr": True,
             # "denoising_strength": 0.7,
             # "hr_upscaler": "Latent",
@@ -56,7 +64,9 @@ async def generate_image(prompt: str, seed: int, width: int, height: int, order)
         logging.error(f"Failed to decode image: {e}")
         return
 
-    output_filename = f"{image_dir}/{order}.png"
+    if not os.path.exists(image_dir):
+        os.makedirs(image_dir)
+    output_filename = os.path.join(image_dir, f"{order}.png")
 
     try:
         with open(output_filename, "wb") as image_file:

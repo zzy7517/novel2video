@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 
-base_dir = Path(os.getcwd()+ "\\" + "temp")
+base_dir = os.path.join(os.getcwd(), "temp")
 
 image_dir = os.path.join(base_dir, "image")
 character_dir = os.path.join(base_dir, "character")
