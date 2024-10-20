@@ -16,25 +16,25 @@ async def generate_image(prompt: str, seed: int, width: int, height: int, order)
             "prompt": "anime" +  prompt + " ",
             "negative_prompt": "(painting by bad-artist-anime:0.9), (painting by bad-artist:0.9), watermark, text, error, blurry, jpeg artifacts, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, artist name,deformed,distorted,disfigured,doll,poorly drawn,bad anatomy,wrong anatomy,bad hand,bad fingers,NSFW",
             "cfg_scale": 7,
-            "steps": 35,
+            "steps": 25,
             "width": width,
             "height": height,
             "override_settings": {
-                "sd_vae": "Automatic",
+                # "sd_vae": "Automatic",
             },
-            # "scheduler": "Simple",
-            # "forge_additional_modules": [
-            #     "E:\\sd\\FORGE-V2-\\forge\\models\\VAE\\ae.safetensors",
-            #     "E:\\sd\\FORGE-V2-\\forge\\models\\VAE\\clip_l.safetensors",
-            #     "E:\\sd\\FORGE-V2-\\forge\\models\\VAE\\t5xxl_fp16.safetensors",
-            # ]
-            # "enable_hr": True,
-            # "denoising_strength": 0.7,
-            # "hr_upscaler": "Latent",
+            "scheduler": "Simple",
+            "forge_additional_modules": [
+                "E:\\sd\\FORGE-V2-\\forge\\models\\VAE\\ae.safetensors",
+                "E:\\sd\\FORGE-V2-\\forge\\models\\VAE\\clip_l.safetensors",
+                "E:\\sd\\FORGE-V2-\\forge\\models\\VAE\\t5xxl_fp16.safetensors",
+            ],
+            "enable_hr": True,
+            "denoising_strength": 0.7,
+            "hr_upscaler": "Latent",
             # "hr_resize_x": 1024,
             # "hr_resize_y": 1024,
-            # "hr_sampler_name": "Euler",
-            # "hr_second_pass_steps": 10,
+            "hr_sampler_name": "Euler",
+            "hr_second_pass_steps": 10,
         }
     except Exception as e:
         logging.error(e)

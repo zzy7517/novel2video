@@ -14,7 +14,7 @@ export default function Home() {
         <div style={styles.container}>
             <div style={styles.sidebar}>
                 <div style={styles.item} onClick={() => setActiveTab("models")}>
-                    初始化模型
+                    初始化
                 </div>
                 <div style={styles.item} onClick={() => setActiveTab("text")}>
                     保存文本

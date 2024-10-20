@@ -56,6 +56,7 @@ export default function AIImageGenerator() {
     };
 
     const extractPrompts = () => {
+        setPrompts([]);
         showToast('开始生成');
         fetch('http://localhost:1198/api/get/novel/prompts')
             .then(response => response.json())
@@ -70,6 +71,7 @@ export default function AIImageGenerator() {
     };
 
     const generateAllImages = () => {
+        setImages([]);
         showToast('开始生成，请等待');
         fetch('http://localhost:1198/api/novel/images', {
             method: 'POST',
@@ -159,6 +161,7 @@ export default function AIImageGenerator() {
 
     const generateSingleImage = async (index:number) => {
         try {
+            showToast('开始');
             const updatedImages = [...images];
             updatedImages[index] = "http://localhost:1198/images/placeholder.png";
             const response = await fetch('http://localhost:1198/api/novel/image', {
@@ -236,6 +239,7 @@ export default function AIImageGenerator() {
 
     const generatePromptsEn = async () => {
         try {
+            setPromptsEn([]);
             showToast('开始生成，请等待');
             const response = await fetch('http://localhost:1198/api/novel/prompts/en');
             if (!response.ok) {
@@ -351,6 +355,8 @@ export default function AIImageGenerator() {
                     margin: 0 auto;
                     padding: 20px;
                     font-family: Arial, sans-serif;
+                    background-color: #f7f7f7;
+                    color: #333;
                 }
                 .header {
                     display: flex;
@@ -370,6 +376,7 @@ export default function AIImageGenerator() {
                     border-radius: 8px;
                     padding: 20px;
                     margin-bottom: 20px;
+                    background-color: #fff;
                 }
                 .input-section, .prompt-section, .promptEn-section, .image-section {
                     width: 23%;
@@ -395,8 +402,9 @@ export default function AIImageGenerator() {
                     font-size: 14px;
                 }
                 button {
-                    background-color: #0070f3;
+                    background-color: #1a1a1a;
                     color: white;
+                    
                     border: none;
                     padding: 10px 20px;
                     border-radius: 4px;
@@ -404,7 +412,7 @@ export default function AIImageGenerator() {
                     font-size: 16px;
                 }
                 button:hover {
-                    background-color: #0051a2;
+                    background-color: #333;
                 }
                 button:disabled {
                     background-color: #ccc;

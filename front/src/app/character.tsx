@@ -99,7 +99,7 @@ export default function CharacterExtractor() {
             <h1 style={{
                 textAlign: 'center',
                 marginBottom: '20px',
-                color: '#2c3e50'
+                color: '#000000'
             }}>生成中文prompts之后提取里面的角色，用于文生图时锁定人物</h1>
             <div style={{
                 display: 'flex',
@@ -113,7 +113,7 @@ export default function CharacterExtractor() {
                     style={{
                         padding: '10px 20px',
                         fontSize: '16px',
-                        backgroundColor: '#27ae60',
+                        backgroundColor: '#1a1a1a',
                         color: 'white',
                         border: 'none',
                         borderRadius: '5px',
@@ -129,7 +129,7 @@ export default function CharacterExtractor() {
                     style={{
                         padding: '10px 20px',
                         fontSize: '16px',
-                        backgroundColor: '#3498db',
+                        backgroundColor: '#1a1a1a',
                         color: 'white',
                         border: 'none',
                         borderRadius: '5px',
@@ -150,7 +150,7 @@ export default function CharacterExtractor() {
                 }}>
                     <h3 style={{
                         marginTop: '0',
-                        color: '#34495e'
+                        color: '#000000'
                     }}>{name}</h3>
                     <textarea
                         value={editedDescriptions[name] ?? description}
@@ -162,8 +162,8 @@ export default function CharacterExtractor() {
                             marginBottom: '10px',
                             borderRadius: '5px',
                             border: '1px solid #bdc3c7',
-                            backgroundColor: '#ecf0f1',
-                            color: '#2c3e50',
+                            backgroundColor: '#f8f8f8',
+                            color: '#000000',
                             fontSize: '14px',
                             resize: 'vertical'
                         }}
@@ -173,7 +173,7 @@ export default function CharacterExtractor() {
                         style={{
                             padding: '5px 10px',
                             fontSize: '14px',
-                            backgroundColor: '#e67e22',
+                            backgroundColor: '#1a1a1a',
                             color: 'white',
                             border: 'none',
                             borderRadius: '5px',
@@ -192,7 +192,7 @@ export default function CharacterExtractor() {
                     style={{
                         padding: '10px 20px',
                         fontSize: '16px',
-                        backgroundColor: '#9b59b6',
+                        backgroundColor: '#1a1a1a',
                         color: 'white',
                         border: 'none',
                         borderRadius: '5px',

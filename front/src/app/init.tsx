@@ -31,7 +31,7 @@ export default function Component() {
         setAddress2(data.address2 || '')
         setAddress3(data.address3 || '')
         setAddress3Type(data.address3Type || 'stable_diffusion_web_ui')
-        setComfyuiNodeApi(data.comfyuiNodeApi || '')
+        setComfyuiNodeApi(JSON.stringify(data.comfyuiNodeApi) || '')
       } else {
         showToast(`读取本地配置出错`)
         console.error('Failed to fetch addresses')

@@ -56,6 +56,7 @@ def prompt_history(prompt_id, url, order):
         response.raise_for_status()
         response_data = response.json()
         if len(response_data) == 0:
+            logging.info("waiting...")
             return False
         if "status" not in response_data[prompt_id]:
             return False

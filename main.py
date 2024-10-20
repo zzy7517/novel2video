@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, send_from_directory
 from flask_cors import CORS
 import logging
 
@@ -10,7 +10,7 @@ from backend.rest_handler.init import get_initial, get_novel_fragments, load_nov
 from backend.rest_handler.prompt import extract_scene_from_texts, get_prompts_en, save_prompt_en, save_prompt_zh
 from backend.rest_handler.video import generate_video, get_video
 from backend.tts.tts import generate_audio_files
-from backend.util.constant import image_dir, novel_fragments_dir, base_dir, video_dir
+from backend.util.constant import image_dir, video_dir
 
 app = Flask(__name__)
 CORS(app)

@@ -50,7 +50,7 @@ def extract_scene_from_texts():
     offset = 0
     sys = read_file(prompt_path)
     for p in prompts_mid:
-        res = query_llm(p, sys, "x", 0.01, 8192)
+        res = query_llm(p, sys, "x", 1, 8192)
         lines = res.split("\n")
         re_pattern = re.compile(r'^\d+\.\s*')
         t2i_prompts = [re_pattern.sub('', line) for line in lines if line.strip()]
