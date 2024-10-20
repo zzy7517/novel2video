@@ -1,7 +1,6 @@
 import logging
 import requests
 
-from backend.llm.keys import SAMBA_NOVA_API_KEY
 from backend.util.file import get_config
 
 LLAMA_405B = "Meta-Llama-3.1-405B-Instruct"

@@ -2,7 +2,6 @@ import logging
 import requests
 import threading
 
-from backend.llm.keys import SILICON_FLOW_API_KEY
 from backend.util.file import get_config
 
 # List of models
