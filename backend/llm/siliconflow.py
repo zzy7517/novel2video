@@ -34,6 +34,7 @@ def query_silicon_flow(input_text, sys_text, temperature):
     messages.append({"role": "user", "content": input_text})
     
     sFModel = get_next_model()
+    logging.debug(f"query sfModel {sFModel}")
     request_body = {
         "temperature": temperature,
         "messages": messages,

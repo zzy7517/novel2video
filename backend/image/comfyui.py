@@ -100,14 +100,14 @@ def replace_prompt_in_map(copyed_data, p):
         for key, value in copyed_data.items():
             if isinstance(value, (dict, list)):
                 replace_prompt_in_map(value, p)
-            elif value == target_value:
-                copyed_data[key] = p
+            elif isinstance(value, str) and target_value in value:
+                copyed_data[key] = value.replace(target_value, p)
     elif isinstance(copyed_data, list):
         for index, item in enumerate(copyed_data):
             if isinstance(item, (dict, list)):
                 replace_prompt_in_map(item, p)
-            elif item == target_value:
-                copyed_data[index] = p
+            elif isinstance(item, str) and target_value in item:
+                copyed_data[index] = item.replace(target_value, p)
     return copyed_data
 
 def post_prompt(prompt, apiRaw, url):
