@@ -1,25 +1,21 @@
 {
-    "address1": "118520d4-3520-451a-ad2a-aba1be3e5440",
+    "address1": "f07fa5cc-e7c1-439c-b028-f8734bd40ad3",
     "address2": "sk-rddjtjldnrqaiabgrvbkriwdgxpvgbijvoboohdntrvmymwu",
-    "address3": "http://10.193.239.246:8188/",
+    "address3": "http://10.193.239.246:8188",
     "address3Type": "comfyui",
     "comfyuiNodeApi": {
         "5": {
-            "_meta": {
-                "title": "Empty Latent Image"
+            "inputs": {
+                "width": 1024,
+                "height": 1024,
+                "batch_size": 1
             },
             "class_type": "EmptyLatentImage",
-            "inputs": {
-                "batch_size": 1,
-                "height": 1024,
-                "width": 1024
+            "_meta": {
+                "title": "Empty Latent Image"
             }
         },
         "8": {
-            "_meta": {
-                "title": "VAE Decode"
-            },
-            "class_type": "VAEDecode",
             "inputs": {
                 "samples": [
                     "13",
@@ -29,70 +25,63 @@
                     "10",
                     0
                 ]
+            },
+            "class_type": "VAEDecode",
+            "_meta": {
+                "title": "VAE Decode"
             }
         },
         "9": {
-            "_meta": {
-                "title": "Save Image"
-            },
-            "class_type": "SaveImage",
             "inputs": {
                 "filename_prefix": "ComfyUI",
                 "images": [
                     "8",
                     0
                 ]
+            },
+            "class_type": "SaveImage",
+            "_meta": {
+                "title": "Save Image"
             }
         },
         "10": {
-            "_meta": {
-                "title": "Load VAE"
+            "inputs": {
+                "vae_name": "ae.sft"
             },
             "class_type": "VAELoader",
-            "inputs": {
-                "+": null,
-                "vae_name": "ae.sft"
+            "_meta": {
+                "title": "Load VAE"
             }
         },
         "11": {
-            "_meta": {
-                "title": "DualCLIPLoader"
-            },
-            "class_type": "DualCLIPLoader",
             "inputs": {
-                "+": null,
-                "clip_name1": "t5xxl_fp16.safetensors",
+                "clip_name1": "t5xxl_fp8_e4m3fn.safetensors",
                 "clip_name2": "clip_l.safetensors",
                 "type": "flux"
+            },
+            "class_type": "DualCLIPLoader",
+            "_meta": {
+                "title": "DualCLIPLoader"
             }
         },
         "12": {
-            "_meta": {
-                "title": "Load Diffusion Model"
-            },
-            "class_type": "UNETLoader",
             "inputs": {
-                "+": null,
                 "unet_name": "FLUX_言灵_极致优秀的动漫大模型_F.1_V1.safetensors",
                 "weight_dtype": "default"
+            },
+            "class_type": "UNETLoader",
+            "_meta": {
+                "title": "Load Diffusion Model"
             }
         },
         "13": {
-            "_meta": {
-                "title": "SamplerCustomAdvanced"
-            },
-            "class_type": "SamplerCustomAdvanced",
             "inputs": {
-                "guider": [
-                    "22",
-                    0
-                ],
-                "latent_image": [
-                    "5",
-                    0
-                ],
                 "noise": [
                     "25",
+                    0
+                ],
+                "guider": [
+                    "22",
                     0
                 ],
                 "sampler": [
@@ -102,108 +91,133 @@
                 "sigmas": [
                     "17",
                     0
+                ],
+                "latent_image": [
+                    "5",
+                    0
                 ]
+            },
+            "class_type": "SamplerCustomAdvanced",
+            "_meta": {
+                "title": "SamplerCustomAdvanced"
             }
         },
         "16": {
-            "_meta": {
-                "title": "KSamplerSelect"
-            },
-            "class_type": "KSamplerSelect",
             "inputs": {
                 "sampler_name": "euler"
+            },
+            "class_type": "KSamplerSelect",
+            "_meta": {
+                "title": "KSamplerSelect"
             }
         },
         "17": {
-            "_meta": {
-                "title": "BasicScheduler"
-            },
-            "class_type": "BasicScheduler",
             "inputs": {
+                "scheduler": "simple",
+                "steps": 8,
                 "denoise": 1,
                 "model": [
                     "28",
                     0
-                ],
-                "scheduler": "simple",
-                "steps": 30
+                ]
+            },
+            "class_type": "BasicScheduler",
+            "_meta": {
+                "title": "BasicScheduler"
             }
         },
         "22": {
-            "_meta": {
-                "title": "BasicGuider"
-            },
-            "class_type": "BasicGuider",
             "inputs": {
-                "conditioning": [
-                    "29",
-                    0
-                ],
                 "model": [
                     "28",
                     0
+                ],
+                "conditioning": [
+                    "29",
+                    0
                 ]
+            },
+            "class_type": "BasicGuider",
+            "_meta": {
+                "title": "BasicGuider"
             }
         },
         "25": {
-            "_meta": {
-                "title": "RandomNoise"
+            "inputs": {
+                "noise_seed": 1115188478935696
             },
             "class_type": "RandomNoise",
-            "inputs": {
-                "control_before_generate": "randomize",
-                "noise_seed": 69889787859159
+            "_meta": {
+                "title": "RandomNoise"
             }
         },
         "26": {
-            "_meta": {
-                "title": "Load LoRA"
-            },
-            "class_type": "LoraLoader",
             "inputs": {
-                "+": null,
-                "clip": [
-                    "11",
+                "lora_name": "flux\\F.1-古风小说推文（堪比niji）_v1.0.safetensors",
+                "strength_model": 1.3,
+                "strength_clip": 1,
+                "model": [
+                    "32",
                     0
                 ],
-                "lora_name": "flux\\动漫风格_动漫风格推文_v1.5.safetensors",
+                "clip": [
+                    "32",
+                    1
+                ]
+            },
+            "class_type": "LoraLoader",
+            "_meta": {
+                "title": "Load LoRA"
+            }
+        },
+        "28": {
+            "inputs": {
+                "max_shift": 1.15,
+                "base_shift": 0.5,
+                "width": 1024,
+                "height": 1024,
+                "model": [
+                    "26",
+                    0
+                ]
+            },
+            "class_type": "ModelSamplingFlux",
+            "_meta": {
+                "title": "ModelSamplingFlux"
+            }
+        },
+        "29": {
+            "inputs": {
+                "clip_l": "$prompt$, Chinese anime, rich colors, cinematic lighting, artstation trending, high detail, no text, detailed, vibrant",
+                "t5xxl": "$prompt$, Chinese anime, rich colors, cinematic lighting, artstation trending, high detail, no text, detailed, vibrant",
+                "guidance": 20,
+                "clip": [
+                    "26",
+                    1
+                ]
+            },
+            "class_type": "CLIPTextEncodeFlux",
+            "_meta": {
+                "title": "CLIPTextEncodeFlux"
+            }
+        },
+        "32": {
+            "inputs": {
+                "lora_name": "flux\\Hyper-FLUX.1-dev-8steps-lora.safetensors",
+                "strength_model": 0.15,
+                "strength_clip": 1,
                 "model": [
                     "12",
                     0
                 ],
-                "strength_clip": 1,
-                "strength_model": 1.3
-            }
-        },
-        "28": {
-            "_meta": {
-                "title": "ModelSamplingFlux"
-            },
-            "class_type": "ModelSamplingFlux",
-            "inputs": {
-                "base_shift": 0.5,
-                "height": 960,
-                "max_shift": 1.15,
-                "model": [
-                    "26",
-                    0
-                ],
-                "width": 512
-            }
-        },
-        "29": {
-            "_meta": {
-                "title": "CLIPTextEncodeFlux"
-            },
-            "class_type": "CLIPTextEncodeFlux",
-            "inputs": {
                 "clip": [
-                    "26",
-                    1
-                ],
-                "clip_l": "$prompt$",
-                "guidance": 3.5,
-                "t5xxl": "$prompt$"
+                    "11",
+                    0
+                ]
+            },
+            "class_type": "LoraLoader",
+            "_meta": {
+                "title": "Load LoRA"
             }
         }
     }

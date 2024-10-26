@@ -36,6 +36,7 @@ def create_video_with_audio_images():
         video = os.path.join(video_dir, 'video.mp4')
         final_clip.write_videofile(video, fps=24)
     except Exception as e :
-        logging.err(f"gen video failed{e}")
+        logging.error(f"gen video failed{e}")
         raise
 
+# todo 字幕 网站https://news.miracleplus.com/share_link/45459

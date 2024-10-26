@@ -4,6 +4,7 @@ import copy
 import logging
 import json
 import os
+import random
 
 import requests
 
@@ -93,6 +94,19 @@ def prompt_history(prompt_id, url, order):
         logging.error(e)
         raise
 
+def generate_random_seed(copyed_data, p):
+    random_number = random.randint(1, 10 ** 15 - 1)
+    if isinstance(copyed_data, dict):
+        for key, value in copyed_data.items():
+            if key == "noise_seed":
+                copyed_data[key] = random_number
+            elif isinstance(value, (dict, list)):
+                generate_random_seed(value, p)
+    elif isinstance(copyed_data, list):
+        for index, item in enumerate(copyed_data):
+            if isinstance(item, (dict, list)):
+                generate_random_seed(item, p)
+    return copyed_data
 
 def replace_prompt_in_map(copyed_data, p):
     target_value = "$prompt$"
@@ -112,7 +126,8 @@ def replace_prompt_in_map(copyed_data, p):
 
 def post_prompt(prompt, apiRaw, url):
     try:
-        api = replace_prompt_in_map(copy.deepcopy(apiRaw), prompt)
+        api1 = replace_prompt_in_map(copy.deepcopy(apiRaw), prompt)
+        api = generate_random_seed(copy.deepcopy(api1), prompt)
         payload = {
             "prompt": api,
         }
