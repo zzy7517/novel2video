@@ -1,8 +1,8 @@
 {
     "address1": "f07fa5cc-e7c1-439c-b028-f8734bd40ad3",
     "address2": "sk-rddjtjldnrqaiabgrvbkriwdgxpvgbijvoboohdntrvmymwu",
-    "address3": "http://10.193.239.246:8188",
-    "address3Type": "comfyui",
+    "address3": "http://10.193.239.248:7860",
+    "address3Type": "stable_diffusion_web_ui",
     "comfyuiNodeApi": {
         "5": {
             "inputs": {

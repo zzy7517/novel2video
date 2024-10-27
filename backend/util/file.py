@@ -3,10 +3,50 @@ import logging
 import os
 import re
 import shutil
+from idlelib.iomenu import encoding
 from typing import List, Tuple
 
 from backend.util.constant import config_path
 
+def read_lines_from_directory_utf8(directory):
+    if not os.path.exists(directory):
+        logging.info(f"dir {directory} doesn't exist")
+        return None, None
+    try:
+        files = os.listdir(directory)
+    except OSError as e:
+        print(f"Error reading directory {directory}: {e}")
+        return None, e
+
+    # Regular expression to extract numbers from filenames
+    regex = re.compile(r'\d+')
+
+    # List to store filenames and their corresponding numbers
+    file_list = []
+
+    for file in files:
+        if file.endswith('.txt'):
+            matches = regex.findall(file)
+            if matches:
+                try:
+                    number = int(matches[0])
+                    file_list.append((file, number))
+                except ValueError:
+                    continue
+
+    # Sort files based on the extracted number
+    file_list.sort(key=lambda x: x[1])
+
+    lines = []
+    for file, _ in file_list:
+        try:
+            with open(os.path.join(directory, file), 'r', encoding='gbk', errors='ignore') as f:
+                lines.append(f.read())
+        except OSError as e:
+            print(f"Error reading file {file}: {e}")
+            continue
+
+    return lines, None
 
 def read_lines_from_directory(directory):
     if not os.path.exists(directory):

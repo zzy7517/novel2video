@@ -6,16 +6,18 @@ import shutil
 from flask import Flask, request, jsonify
 
 from backend.llm.llm import query_llm
-from backend.util.constant import character_dir, prompts_dir
+from backend.util.constant import character_dir, prompts_dir, novel_fragments_dir
 
 extract_character_sys = """
 	#Task: #
 	Extract characters from the novel fragment
 	
 	#Rule#
-	1. 提取出所有的人名
+	1. 提取出所有出现过的角色
 	2. 所有的人名，别名，称呼，包括对话中引用到的名字都需要提取
     3. 所有出现过的和人有关的称呼都需要提取
+    4. 如果文本以第一人称或者第二人称叙述，我/你这种人称代词也需要提取
+	5. 如果一个人出现过不止一种称呼，则都提取
 	
 	#Output Format:#
 	名字1/名字2/名字3/...
@@ -30,8 +32,8 @@ def get_new_characters():
 
         # Read lines from the prompts directory
         lines = []
-        for file_name in os.listdir(prompts_dir):
-            with open(os.path.join(prompts_dir, file_name), 'r') as file:
+        for file_name in os.listdir(novel_fragments_dir):
+            with open(os.path.join(novel_fragments_dir, file_name), 'r') as file:
                 lines.extend(file.readlines())
 
         # Process lines in chunks

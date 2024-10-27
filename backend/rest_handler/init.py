@@ -7,7 +7,8 @@ import shutil
 
 from backend.util.constant import image_dir, novel_fragments_dir, novel_path, prompts_dir, prompts_en_dir, prompt_path, \
     config_path
-from backend.util.file import read_files_from_directory, read_lines_from_directory, save_list_to_files, read_file
+from backend.util.file import read_files_from_directory, read_lines_from_directory, save_list_to_files, read_file, \
+    read_lines_from_directory_utf8
 
 
 def handle_error(status_code, message, error):
@@ -61,8 +62,10 @@ def get_novel_fragments():
 
         lines, error = read_lines_from_directory(novel_fragments_dir)
         if error:
+            logging.error(error)
             return handle_error(500, "Failed to read fragments", error)
     except Exception as e:
+        logging.error(e)
         return handle_error(500, "Failed to process request", e)
 
     return jsonify(lines), 200
@@ -77,7 +80,7 @@ def get_initial():
         if error:
             return handle_error(500, "Failed to read prompts", error)
 
-        prompts_en, error = read_lines_from_directory(prompts_en_dir)
+        prompts_en, error = read_lines_from_directory_utf8(prompts_en_dir)
         if error:
             return handle_error(500, "Failed to read prompts", error)
 
@@ -96,6 +99,7 @@ def get_initial():
             "promptsEn": prompts_en
         }
     except Exception as e:
+        logging.error(e)
         return handle_error(500, "Failed to process request", e)
 
     return jsonify(data), 200

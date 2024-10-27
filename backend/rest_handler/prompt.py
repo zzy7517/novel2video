@@ -9,7 +9,7 @@ from backend.llm.llm import llm_translate, query_llm
 from backend.util.constant import character_dir, novel_fragments_dir, prompts_dir, prompts_en_dir, prompt_path
 from backend.util.file import read_lines_from_directory, save_list_to_files, read_file
 
-fragmentsLen = 80
+fragmentsLen = 50
 
 # Function to generate input prompts
 def generate_input_prompts(lines, step):
@@ -121,7 +121,7 @@ def save_prompt_en():
     file_path = os.path.join(prompts_en_dir, f"{req['index']}.txt")
     try:
         os.makedirs(prompts_en_dir, exist_ok=True)
-        with open(file_path, 'w') as file:
+        with open(file_path, 'w', encoding='utf-8') as file:
             file.write(req['content'])
     except Exception as e:
         return jsonify({"error": "Failed to write file"}), 500
@@ -136,7 +136,7 @@ def save_prompt_zh():
     file_path = os.path.join(prompts_dir, f"{req['index']}.txt")
     try:
         os.makedirs(prompts_dir, exist_ok=True)
-        with open(file_path, 'w') as file:
+        with open(file_path, 'w', encoding='utf-8') as file:
             file.write(req['content'])
     except Exception as e:
         return jsonify({"error": "Failed to write file"}), 500
