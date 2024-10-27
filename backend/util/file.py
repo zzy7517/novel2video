@@ -80,7 +80,7 @@ def read_lines_from_directory(directory):
     lines = []
     for file, _ in file_list:
         try:
-            with open(os.path.join(directory, file), 'r') as f:
+            with open(os.path.join(directory, file), 'r', errors = 'ignore') as f:
                 lines.append(f.read())
         except OSError as e:
             print(f"Error reading file {file}: {e}")
