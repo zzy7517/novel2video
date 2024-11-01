@@ -80,7 +80,7 @@ def read_lines_from_directory(directory):
     lines = []
     for file, _ in file_list:
         try:
-            with open(os.path.join(directory, file), 'r') as f:
+            with open(os.path.join(directory, file), 'r', encoding='utf-8') as f:
                 lines.append(f.read())
         except OSError as e:
             print(f"Error reading file {file}: {e}")
@@ -126,7 +126,7 @@ def save_list_to_files(input_list, path, offset):
     try:
         for i, line in enumerate(input_list):
             file_path = os.path.join(path, f"{i + offset}.txt")
-            with open(file_path, 'w') as file:
+            with open(file_path, 'w', encoding='utf-8') as file:
                 file.write(line)
     except Exception as e:
         return e

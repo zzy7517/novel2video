@@ -13,7 +13,7 @@ async def generate_image(prompt: str, seed: int, width: int, height: int, order)
     try:
         url = get_config()['address3']
         payload = {
-            "prompt": prompt + "intricate details,<lora:Anime Magic XL:1>",
+            "prompt": prompt + "intricate details, master piece",
             "negative_prompt": "ng_deepnegative_v1_75t,badhandv4 (worst quality:2),(low quality:2),(normal quality:2),lowres,bad anatomy,normal quality,((monochrome)),((grayscale)),(painting by bad-artist-anime:0.9), (painting by bad-artist:0.9), watermark, text, error, blurry, jpeg artifacts, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, artist name,deformed,distorted,disfigured,doll,poorly drawn,bad anatomy,wrong anatomy,bad hand,bad fingers,NSFW",
             "sampler_name": "DPM++ 2M",
             "scheduler": "Karras",

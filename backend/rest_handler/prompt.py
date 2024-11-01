@@ -9,7 +9,7 @@ from backend.llm.llm import llm_translate, query_llm
 from backend.util.constant import character_dir, novel_fragments_dir, prompts_dir, prompts_en_dir, prompt_path
 from backend.util.file import read_lines_from_directory, save_list_to_files, read_file
 
-fragmentsLen = 50
+fragmentsLen = 30
 
 # Function to generate input prompts
 def generate_input_prompts(lines, step):
@@ -57,6 +57,7 @@ def extract_scene_from_texts():
         t2i_prompts = [re_pattern.sub('', line) for line in lines if line.strip()]
         offset += len(t2i_prompts)
         try:
+            logging.info(f"len is {len(t2i_prompts)}")
             save_list_to_files(t2i_prompts, prompts_dir, offset - len(t2i_prompts))
         except Exception as e:
             return jsonify({"error": "save list to file failed"}), 500

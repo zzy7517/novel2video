@@ -27,7 +27,7 @@ def save_lines_to_files(file_name):
                     linesWithContent.append(line)
             for i, line in enumerate(linesWithContent):
                 file_path = os.path.join(novel_fragments_dir, f"{i}.txt")
-                with open(file_path, 'w') as f:
+                with open(file_path, 'w',encoding='utf-8') as f:
                     f.write(line)
     except Exception as e:
         return e

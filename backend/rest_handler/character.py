@@ -33,7 +33,7 @@ def get_new_characters():
         # Read lines from the prompts directory
         lines = []
         for file_name in os.listdir(novel_fragments_dir):
-            with open(os.path.join(novel_fragments_dir, file_name), 'r') as file:
+            with open(os.path.join(novel_fragments_dir, file_name), 'r', encoding='utf-8') as file:
                 lines.extend(file.readlines())
 
         # Process lines in chunks

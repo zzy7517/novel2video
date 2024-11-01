@@ -48,7 +48,7 @@ def convert_text_to_speech(line, audio_dir, i):
         # zh-CN-YunxiNeural  YunjianNeural  rate='25%' YunyangNeural
         communicate = edge_tts.Communicate(
             text=line,
-            voice="zh-CN-YunyangNeural",
+            voice="zh-CN-XiaoxiaoNeural",
             rate="+35%"
         )
 
