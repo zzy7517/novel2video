@@ -40,7 +40,7 @@ def read_lines_from_directory_utf8(directory):
     lines = []
     for file, _ in file_list:
         try:
-            with open(os.path.join(directory, file), 'r', encoding='gbk', errors='ignore') as f:
+            with open(os.path.join(directory, file), 'r', encoding='utf-8') as f:
                 lines.append(f.read())
         except OSError as e:
             print(f"Error reading file {file}: {e}")

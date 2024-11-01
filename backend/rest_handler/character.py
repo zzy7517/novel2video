@@ -60,7 +60,7 @@ def get_local_characters():
     try:
         if not os.path.exists(character_dir):
             return jsonify({"error":"no local characters"}), 40401
-        with open(os.path.join(character_dir, 'characters.txt'), 'r') as file:
+        with open(os.path.join(character_dir, 'characters.txt'), 'r', encoding='utf-8') as file:
             character_map = json.load(file)
         return jsonify(character_map), 200
     except Exception as e:
@@ -73,12 +73,12 @@ def put_characters():
         if not descriptions:
             return jsonify({"error": "Invalid JSON"}), 400
 
-        with open(os.path.join(character_dir, 'characters.txt'), 'r') as file:
+        with open(os.path.join(character_dir, 'characters.txt'), 'r', encoding='utf-8') as file:
             character_map = json.load(file)
 
         character_map.update(descriptions)
         # Save descriptions to a file
-        with open(os.path.join(character_dir, 'characters.txt'), 'w') as file:
+        with open(os.path.join(character_dir, 'characters.txt'), 'w', encoding='utf-8') as file:
             json.dump(character_map, file)
 
         return jsonify({"message": "Descriptions updated successfully"}), 200
