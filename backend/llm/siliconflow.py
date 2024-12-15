@@ -11,7 +11,7 @@ silicon_flow_free_models = [
     "THUDM/glm-4-9b-chat",
     "01-ai/Yi-1.5-9B-Chat-16K",
     "internlm/internlm2_5-7b-chat",
-    "google/gemma-2-9b-it",
+    #"google/gemma-2-9b-it",
     #"meta-llama/Meta-Llama-3-8B-Instruct",
     #"meta-llama/Meta-Llama-3.1-8B-Instruct",
 ]
