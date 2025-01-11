@@ -2,7 +2,7 @@
 
 Novel2Video 是一个工具，旨在将小说内容批量转换为图片和音频，最终生成小说推文。
 
-- 使用免费的llama-3.1-405b提取小说场景
+- 默认使用免费的llama-3.1-405b提取小说场景，兼容openaiapi
 - 支持 Stable Diffusion web UI 和 ComfyUI
 - 支持人物锁定，确保角色一致性
 - 支持批量出图以及单张重绘
@@ -38,7 +38,7 @@ npm run dev
 ## 使用说明
 以comfyui为例 <br>
 1. 如图所示，先保存一下你的配置 <br>
-<img width="564" alt="Snipaste_2024-10-21_22-35-46" src="https://github.com/user-attachments/assets/00feb1d9-6213-425d-8747-90bd64566cd9"> <br>
+![image](https://github.com/user-attachments/assets/99b16096-b057-4cb7-91eb-536ab467315d)
 2. 然后在保存文本页面，保存你的小说文本和提示词, 提示词用来提取小说的场景 <br>
 ![image](https://github.com/user-attachments/assets/d5dc1a80-5db4-4e00-b722-1c959fcb32a9)
 3. 先点击分割章节，分割完成后，点击提取中文的prompts，刚刚保存的提示词就作用在这里，理论上每段分割的文本会有一个中文提示词 <br>
@@ -46,7 +46,7 @@ npm run dev
 4. 为了保证人物的一致性，需要写死角色，这一步一定要在第3步之后，如果之前没有生成过角色，点击 '提取角色' 按钮 <br>
 ![image](https://github.com/user-attachments/assets/d0ecd807-eba1-406f-9f47-ec9ae103ee94)
 5. 配置好角色之后，点击 '翻译成英文' 按钮，翻译完成之后可以点击 '一键生成'  或者 '重新生成'，生成全部或者单张图片，'一键生成' 的过程中，可以点击 '刷新' 按钮加载本地的图片  <br>
-![image](https://github.com/user-attachments/assets/f5496226-0876-4d4b-8c3d-ca2d55089947)
+![image](https://github.com/user-attachments/assets/3974c8b8-0843-4d7f-90f1-ca33014f84b3)
 6. 与此同时，可以点击 '生成音频' 生成声音 <br>
 7. 生成的文本文件/图像/音频都在temp目录下
 8. 等文本和语音生成完成后，可以一键生成视频，后续的字幕，BGM等视频处理可以使用剪映
