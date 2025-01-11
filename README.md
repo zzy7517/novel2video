@@ -37,7 +37,7 @@ npm run dev
 
 ## 使用说明
 以comfyui为例 <br>
-1. 如图所示，先保存一下你的配置 <br>
+1. 如图所示，先保存一下你的配置，或者使用默认的配置 <br>
 ![image](https://github.com/user-attachments/assets/99b16096-b057-4cb7-91eb-536ab467315d)
 2. 然后在保存文本页面，保存你的小说文本和提示词, 提示词用来提取小说的场景 <br>
 ![image](https://github.com/user-attachments/assets/d5dc1a80-5db4-4e00-b722-1c959fcb32a9)
