@@ -48,6 +48,7 @@ npm run dev
 5. 配置好角色之后，点击 '翻译成英文' 按钮，翻译完成之后可以点击 '一键生成'  或者 '重新生成'，生成全部或者单张图片，'一键生成' 的过程中，可以点击 '刷新' 按钮加载本地的图片  <br>
 ![image](https://github.com/user-attachments/assets/3974c8b8-0843-4d7f-90f1-ca33014f84b3)
 6. 与此同时，可以点击 '生成音频' 生成声音 <br>
+![image](https://github.com/user-attachments/assets/f5496226-0876-4d4b-8c3d-ca2d55089947)
 7. 生成的文本文件/图像/音频都在temp目录下
 8. 等文本和语音生成完成后，可以一键生成视频，后续的字幕，BGM等视频处理可以使用剪映
 
@@ -55,3 +56,5 @@ npm run dev
     - [ ] 一键反推
     - [ ] midjourney 支持
     - [ ] 更丰富的语音合成功能
+    - [ ] 一键加特效
+
