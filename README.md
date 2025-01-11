@@ -42,13 +42,12 @@ npm run dev
 2. 然后在保存文本页面，保存你的小说文本和提示词, 提示词用来提取小说的场景 <br>
 ![image](https://github.com/user-attachments/assets/d5dc1a80-5db4-4e00-b722-1c959fcb32a9)
 3. 先点击分割章节，分割完成后，点击提取中文的prompts，刚刚保存的提示词就作用在这里，理论上每段分割的文本会有一个中文提示词 <br>
-![image](https://github.com/user-attachments/assets/15b49f2f-4924-4115-8051-a3cc3b2dc1b9)
+![image](https://github.com/user-attachments/assets/3eb93f29-7f22-4f4e-a375-0b9d8e23d621)
 4. 为了保证人物的一致性，需要写死角色，这一步一定要在第3步之后，如果之前没有生成过角色，点击 '提取角色' 按钮 <br>
 ![image](https://github.com/user-attachments/assets/d0ecd807-eba1-406f-9f47-ec9ae103ee94)
 5. 配置好角色之后，点击 '翻译成英文' 按钮，翻译完成之后可以点击 '一键生成'  或者 '重新生成'，生成全部或者单张图片，'一键生成' 的过程中，可以点击 '刷新' 按钮加载本地的图片  <br>
-![image](https://github.com/user-attachments/assets/3974c8b8-0843-4d7f-90f1-ca33014f84b3)
+![image](https://github.com/user-attachments/assets/4e4c8789-b6a0-4241-9970-83babc7bc32a)
 6. 与此同时，可以点击 '生成音频' 生成声音 <br>
-![image](https://github.com/user-attachments/assets/f5496226-0876-4d4b-8c3d-ca2d55089947)
 7. 生成的文本文件/图像/音频都在temp目录下
 8. 等文本和语音生成完成后，可以一键生成视频，后续的字幕，BGM等视频处理可以使用剪映
 
