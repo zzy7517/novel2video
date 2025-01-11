@@ -6,6 +6,7 @@ from backend.util.file import get_config
 LLAMA_405B = "Meta-Llama-3.1-405B-Instruct"
 
 def query_samba_nova(input_text: str, sys: str, model_name: str, temperature: float) -> str:
+    model = get_config()['model']
     try:
         url = "https://api.sambanova.ai/v1/chat/completions"
         messages = []
@@ -16,9 +17,9 @@ def query_samba_nova(input_text: str, sys: str, model_name: str, temperature: fl
         request_body = {
             "temperature": temperature,
             "messages": messages,
-            "model": LLAMA_405B,  # Assuming model_name is passed correctly
+            "model": model,  # Assuming model_name is passed correctly
         }
-        key = get_config()['address1']
+        key = get_config()['apikey']
         headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {key}",

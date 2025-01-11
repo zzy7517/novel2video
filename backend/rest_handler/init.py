@@ -147,19 +147,14 @@ def save_prompt():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-file_paths = {
-    'address1': 'samba_nova_key.txt',
-    'address2': 'silicon_flow_key.txt',
-    'address3': 'stable_diffusion_address.txt',
-}
 def get_model_config():
     if not os.path.exists(config_path) or os.path.getsize(config_path) == 0:
         with open(config_path, 'w', encoding='utf-8') as file:
-            json.dump({'address1': '', 'address2': '', 'address3': ''}, file)
+            json.dump({'model':'', 'url':'', 'apikey': '', 'address2': '', 'address3': ''}, file)
     try:
         with open(config_path, 'r', encoding='utf-8') as file:
             data = json.load(file)
-            logging.info(data['address1'])
+            logging.info(data['url'])
         return jsonify(data)
     except Exception as e:
         logging.error(f'Error reading addresses: {e}')
@@ -171,8 +166,6 @@ def save_model_config():
         data = request.json
         key = data.get('key')
         value = data.get('value')
-        if key not in ['address1', 'address2', 'address3', 'address3Type', 'comfyuiNodeApi']:
-            return 'Invalid address key', 400
         with open(config_path, 'r', encoding='utf-8') as file:
             addresses = json.load(file)
         if isinstance(value, str):
